@@ -1,0 +1,20 @@
+[
+  {
+    "DRIVER":"fs",
+    "DRIVER_OPTIONS":
+    {
+      "AJXP_SLUG":"pydio-testing-fs",
+      "DEFAULT_RIGHTS":"rw",
+      "CREATE":false,
+      "CHMOD_VALUE":"0666",
+      "RECYCLE_BIN":"recycle_bin",
+      "PAGINATION_THRESHOLD":500,
+      "PAGINATION_NUMBER":200,
+      "REMOTE_SORTING":true,
+      "REMOTE_SORTING_DEFAULT_COLUMN":"ajxp_label",
+      "REMOTE_SORTING_DEFAULT_DIRECTION":"asc",
+      "PATH":"AJXP_DATA_PATH/files"
+    },
+    "DISPLAY":"Pydio Testing FS"
+  }
+]
