@@ -21,10 +21,21 @@ from sdk.remote import PydioSdk
 import logging
 import json
 import xml.etree.ElementTree as ET
+import pytest
+from configs.config_logger import setup_logging
+
+setup_logging(logging.INFO)
+
+@pytest.fixture
+def server_def():
+    server_file = 'configs/server.json'
+    with open(server_file) as handler:
+        jDict = json.load(handler)
+    return jDict
 
 
 def inner_debug(message):
-    logging.debug("  | %s" % message)
+    logging.info("  | %s" % message)
 
 
 def load_json_repos():
@@ -45,7 +56,7 @@ def ls(server_def, repo_id, test_path='/recycle_bin'):
         raise Exception("Cannot find /recycle_bin in listing")
 
 
-def test_write(server_def, repo_id):
+def write(server_def, repo_id):
     sdk = PydioSdk(server_def['host'], repo_id, unicode(''), '', (server_def['user'], server_def['pass']))
     sdk.stick_to_basic = True
     sdk.mkfile('/pydio-testing-test_file')
@@ -75,16 +86,18 @@ def delete_repo(server_def, repo_id):
     inner_debug(resp.content)
 
 
-def run_tests(server):
+def test_workspaces(server_def):
     repositories = load_json_repos()
     for repo in repositories:
         try:
             logging.info("[TESTING WORKSPACE %s]" % repo['DISPLAY'])
-            new_id = create_repo(server, repo)
-            testRes = ls(server, new_id)
-            delete_repo(server, new_id)
+            new_id = create_repo(server_def, repo)
+            testRes = ls(server_def, new_id)
+            delete_repo(server_def, new_id)
             logging.info("[> SUCCESS]")
             logging.info(" ")
+            assert testRes
         except Exception as e:
             logging.error(e)
             logging.error("[> ERROR]")
+            assert False

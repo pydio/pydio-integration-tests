@@ -17,5 +17,3 @@
 #
 #  The latest code can be found at <http://pyd.io/>.
 #
-import pytest
-pytest.main(args=['-s'])
