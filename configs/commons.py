@@ -17,8 +17,10 @@
 #
 #  The latest code can be found at <http://pyd.io/>.
 #
-import pytest, json
+import pytest, json, logging
 
+def inner_debug(message):
+    logging.info("  | %s" % message)
 
 @pytest.fixture
 def server_def():
@@ -29,7 +31,7 @@ def server_def():
 
 @pytest.fixture
 def workspaces_defs():
-    repo_file = 'configs/repos.json'
+    repo_file = 'configs/workspaces.json'
     with open(repo_file) as handler:
         jDict = json.load(handler)
     return jDict
