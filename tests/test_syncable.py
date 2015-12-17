@@ -29,20 +29,32 @@ def test_fs(server_def, workspaces_defs):
     sdk = PydioSdk(server_def['host'], repo_id, unicode(''), '', (server_def['user'], server_def['pass']))
     sdk.stick_to_basic = True
 
-    path = '/pydio-simple-file'
+    path = '/pydio-sync-file'
+    changes = sdk.changes(0)
+    last_seq = changes['last_seq']
+
 
     # CREATE FILE
     sdk.mkfile(path)
-    # CHECK FILE IS IN LIST
-    result = sdk.list('/')
-    inner_debug(result)
-    assert path in result
+    # CHECK FILE IS IN CHANGES
+    data = sdk.changes(last_seq)
+    last_seq = data['last_seq']
+    found = False
+    for change in data['changes']:
+        if change['source'] == 'NULL' and change['target'] == path and change['type'] == 'create':
+            found = True
+    assert found
+
 
     # DELETE FILE
     sdk.delete(path)
-    # CHECK FILE IS NO MORE IN LIST
-    result = sdk.list('/')
-    inner_debug(result)
-    assert path not in result
+    # CHECK DELETION APPEARS IN CHANGES
+    data = sdk.changes(last_seq)
+    last_seq = data['last_seq']
+    found = False
+    for change in data['changes']:
+        if change['source'] == path and change['target'] == 'NULL' and change['type'] == 'delete':
+            found = True
+    assert found
 
     delete_repo(server_def, repo_id)
