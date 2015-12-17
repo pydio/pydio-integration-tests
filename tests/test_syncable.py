@@ -57,4 +57,16 @@ def test_fs(server_def, workspaces_defs):
             found = True
     assert found
 
+    # CREATE A MOVE
+    sdk.mkfile(path)
+    sdk.rename(path, path + '-moved')
+    # CHECK DELETION APPEARS IN CHANGES
+    data = sdk.changes(last_seq)
+    last_seq = data['last_seq']
+    found = False
+    for change in data['changes']:
+        if change['source'] == path and change['target'] == path + '-moved' and change['type'] == 'path':
+            found = True
+    assert found
+
     delete_repo(server_def, repo_id)
