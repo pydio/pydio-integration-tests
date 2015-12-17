@@ -19,30 +19,14 @@
 #
 from sdk.remote import PydioSdk
 import logging
-import json
 import xml.etree.ElementTree as ET
-import pytest
 from configs.config_logger import setup_logging
+from configs.fixtures import *
 
 setup_logging(logging.INFO)
 
-@pytest.fixture
-def server_def():
-    server_file = 'configs/server.json'
-    with open(server_file) as handler:
-        jDict = json.load(handler)
-    return jDict
-
-
 def inner_debug(message):
     logging.info("  | %s" % message)
-
-
-def load_json_repos():
-    repo_file = 'configs/repos.json'
-    with open(repo_file) as handler:
-        jDict = json.load(handler)
-    return jDict
 
 
 def ls(server_def, repo_id, test_path='/recycle_bin'):
@@ -65,6 +49,7 @@ def write(server_def, repo_id):
 def create_repo(server_def, repo_def):
     sdk = PydioSdk(server_def['host'], 'ajxp_conf', unicode(''), '', (server_def['user'], server_def['pass']))
     sdk.stick_to_basic = True
+    import json
     json_data = json.dumps(repo_def)
     resp = sdk.perform_request(sdk.url+'/create_repository/'+json_data, 'post')
     inner_debug(resp.content)
@@ -86,9 +71,8 @@ def delete_repo(server_def, repo_id):
     inner_debug(resp.content)
 
 
-def test_workspaces(server_def):
-    repositories = load_json_repos()
-    for repo in repositories:
+def test_workspaces(server_def, workspaces_defs):
+    for repo in workspaces_defs:
         try:
             logging.info("[TESTING WORKSPACE %s]" % repo['DISPLAY'])
             new_id = create_repo(server_def, repo)
