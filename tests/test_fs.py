@@ -40,11 +40,42 @@ def create_delete(sdk, path):
     assert path not in result
 
 
-def test_fs(server_def, workspace_id):
+def local_stat(path):
+    import os
+    stat_result = os.stat(path)
+    s = dict()
+    s['size'] = stat_result.st_size
+    s['mtime'] = stat_result.st_mtime
+    s['mode'] = stat_result.st_mode
+    s['inode'] = stat_result.st_ino
+    return s
+
+
+def test_simple(server_def, workspace_id):
 
     sdk = PydioSdk(server_def['host'], workspace_id, unicode(''), '', (server_def['user'], server_def['pass']))
     sdk.stick_to_basic = True
 
-    #path = '/pydio-simple-file'
     create_delete(sdk, '/pydio-simple-file')
     create_delete(sdk, '/fichié accentué'.decode('utf-8'))
+
+
+def test_upload(server_def, workspace_id):
+
+    sdk = PydioSdk(server_def['host'], workspace_id, unicode(''), '', (server_def['user'], server_def['pass']))
+    sdk.stick_to_basic = True
+
+    stat = local_stat('resources/image.png')
+    sdk.upload(local='resources/image.png', local_stat=local_stat('resources/image.png'), path=unicode('/image.png'))
+
+    result = sdk.list('/')
+    assert '/image.png' in result
+    assert int(result['/image.png']) == stat['size']
+
+    sdk.download(unicode('/image.png'), 'resources/downloaded_image.png')
+    new_stat = local_stat('resources/downloaded_image.png')
+    assert new_stat['size'] == stat['size']
+
+    sdk.delete('/image.png')
+    import os
+    os.unlink('resources/downloaded_image.png')
