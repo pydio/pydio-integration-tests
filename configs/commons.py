@@ -36,4 +36,20 @@ def workspaces_defs():
         jDict = json.load(handler)
     return jDict
 
+@pytest.fixture
+def workspace_id(request):
+    repo_file = 'configs/workspaces.json'
+    with open(repo_file) as handler:
+        workspaces_defs = json.load(handler)
 
+    server_file = 'configs/server.json'
+    with open(server_file) as handler:
+        server_def = json.load(handler)
+
+    from sdk.ajxp_conf import create_repo, delete_repo
+    repo_id = create_repo(server_def, workspaces_defs[0])
+    def fin():
+        print ("teardown repo")
+        delete_repo(server_def, repo_id)
+    request.addfinalizer(fin)
+    return repo_id

@@ -23,10 +23,9 @@ from sdk.ajxp_conf import *
 
 setup_logging(logging.INFO)
 
-def test_fs(server_def, workspaces_defs):
+def test_syncable(server_def, workspace_id):
 
-    repo_id = create_repo(server_def, workspaces_defs[0])
-    sdk = PydioSdk(server_def['host'], repo_id, unicode(''), '', (server_def['user'], server_def['pass']))
+    sdk = PydioSdk(server_def['host'], workspace_id, unicode(''), '', (server_def['user'], server_def['pass']))
     sdk.stick_to_basic = True
 
     path = '/pydio-sync-file'
@@ -67,6 +66,5 @@ def test_fs(server_def, workspaces_defs):
     for change in data['changes']:
         if change['source'] == path and change['target'] == path + '-moved' and change['type'] == 'path':
             found = True
+    sdk.delete(path + '-moved')
     assert found
-
-    delete_repo(server_def, repo_id)

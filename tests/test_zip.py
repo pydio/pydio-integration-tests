@@ -1,4 +1,3 @@
-# coding=utf-8
 #
 # Copyright 2007-2014 Charles du Jeu - Abstrium SAS <team (at) pyd.io>
 #  This file is part of Pydio.
@@ -24,27 +23,32 @@ from sdk.ajxp_conf import *
 
 setup_logging(logging.INFO)
 
-def create_delete(sdk, path):
-    # CREATE FILE
-    sdk.mkfile(path)
-    # CHECK FILE IS IN LIST
-    result = sdk.list('/')
-    inner_debug(result)
-    assert path in result
-
-    # DELETE FILE
-    sdk.delete(path)
-    # CHECK FILE IS NO MORE IN LIST
-    result = sdk.list('/')
-    inner_debug(result)
-    assert path not in result
-
-
-def test_fs(server_def, workspace_id):
+def test_zip(server_def, workspace_id):
 
     sdk = PydioSdk(server_def['host'], workspace_id, unicode(''), '', (server_def['user'], server_def['pass']))
     sdk.stick_to_basic = True
 
-    #path = '/pydio-simple-file'
-    create_delete(sdk, '/pydio-simple-file')
-    create_delete(sdk, '/fichié accentué'.decode('utf-8'))
+    path = '/pydio-simple-file'
+
+    # CREATE FOLDERS
+    sdk.bulk_mkdir(['/a', '/a/b', '/a/b/c', '/a/b/d'])
+    result = sdk.list(unicode('/a/b'))
+    assert '/a/b/c' in result
+    assert '/a/b/d' in result
+
+    # CREATE ZIP FROM FOLDER A
+    data = dict()
+    data['archive_name'] = 'a.zip'
+    sdk.perform_request(sdk.url + '/compress/a', data=data, type='post')
+    result = sdk.list('')
+    assert '/a.zip' in result
+
+    result = sdk.list(unicode('/a.zip'))
+    assert '/a.zip/a' in result
+
+    result = sdk.list(unicode('/a.zip/a/b'))
+    assert '/a.zip/a/b/c' in result
+    assert '/a.zip/a/b/d' in result
+
+    sdk.delete('/a')
+    sdk.delete('/a.zip')
