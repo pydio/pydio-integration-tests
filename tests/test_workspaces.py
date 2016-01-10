@@ -41,12 +41,13 @@ def test_workspaces(server_def, workspaces_defs):
         try:
             logging.info("[TESTING WORKSPACE %s]" % repo['DISPLAY'])
             new_id = create_repo(server_def, repo)
-            testRes = ls(server_def, new_id)
-            delete_repo(server_def, new_id)
+            if repo["DRIVER_OPTIONS"]["RECYCLE_BIN"]:
+                testRes = ls(server_def, new_id)
+                assert testRes
             logging.info("[> SUCCESS]")
             logging.info(" ")
-            assert testRes
         except Exception as e:
             logging.error(e)
             logging.error("[> ERROR]")
             assert False
+        delete_repo(server_def, new_id)
