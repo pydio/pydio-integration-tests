@@ -24,7 +24,6 @@ import hmac
 import random
 import unicodedata
 import platform
-from pydio.utils.functions import hashfile
 from hashlib import sha256
 from hashlib import sha1
 from urlparse import urlparse

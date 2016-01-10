@@ -172,3 +172,10 @@ def file_start_hash_match(local_file, size, remote_hash):
             md5.update(data)
     return remote_hash == md5.hexdigest()
 
+
+def hashfile(afile, hasher, blocksize=65536):
+    buf = afile.read(blocksize)
+    while len(buf) > 0:
+        hasher.update(buf)
+        buf = afile.read(blocksize)
+    return hasher.hexdigest()
