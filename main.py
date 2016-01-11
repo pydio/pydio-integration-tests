@@ -35,4 +35,6 @@ elif cmd == 'install':
     with open(fname) as serverP:
         server_data = json.load(serverP)
         sdk = PydioSdk(url=server_data['host'])
-        sdk.install(server_data['install_data'])
+        response = sdk.install(server_data['install_data'])
+        if response != 'OK':
+            exit(1)
