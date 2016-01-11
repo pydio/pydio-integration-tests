@@ -57,5 +57,7 @@ docs/_build/
 target/
 
 .idea
-configs/workspaces.json
-configs/server.json
+configs/workspaces.json*
+configs/server.*.json
+configs/install.json
+configs/install-*.json

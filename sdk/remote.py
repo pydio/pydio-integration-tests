@@ -28,7 +28,7 @@ from hashlib import sha256
 from hashlib import sha1
 from urlparse import urlparse
 
-
+import math
 from requests.exceptions import ConnectionError, RequestException
 import keyring
 from keyring.errors import PasswordSetError
@@ -1084,4 +1084,34 @@ class PydioSdk():
                     auth=self.auth,
                     proxies=self.proxies)
 
+        return resp.content
+
+    def install(self, json_form_data):
+
+        # Cannot use REST, Get Token First
+        s = requests.Session()
+        resp1 = s.get(
+            url=self.base_url.replace('/api/', '') + '/?get_action=get_boot_conf',
+            timeout=self.timeout,
+            verify=self.verify_ssl,
+            proxies=self.proxies
+        )
+        resp_json = json.loads(resp1.content)
+        token = resp_json['SECURE_TOKEN']
+
+        print "Retrieved Secure Token : " + token
+
+        # Now Apply Installer Form
+        json_form_data['db_type'] = json.dumps(json_form_data['db_type'])
+        json_form_data['MAILER_ENABLE'] = json.dumps(json_form_data['MAILER_ENABLE'])
+
+        resp = s.post(
+            url=self.base_url.replace('/api/', '/?secure_token='+token+'&get_action=apply_installer_form'),
+            data=json_form_data,
+            timeout=self.timeout,
+            verify=self.verify_ssl,
+            proxies=self.proxies
+        )
+
+        print "Submitted install form with response : " + resp.content
         return resp.content

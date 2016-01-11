@@ -1,5 +1,40 @@
 {
   "host":"http://localhost",
   "user":"XXX",
-  "pass":"YYY"
+  "pass":"YYY",
+  "install_data":{
+    "ignore_tests":"true",
+    "APPLICATION_TITLE":"Pydio",
+    "APPLICATION_TITLE_ajxptype":"string",
+    "APPLICATION_WELCOME":"Welcome to Pydio",
+    "APPLICATION_WELCOME_ajxptype":"string",
+    "ADMIN_USER_LOGIN":"admin",
+    "ADMIN_USER_LOGIN_ajxptype":"string",
+    "ADMIN_USER_NAME":"admin",
+    "ADMIN_USER_NAME_ajxptype":"string",
+    "ADMIN_USER_PASS":"********",
+    "ADMIN_USER_PASS_ajxptype":"password",
+    "ADMIN_USER_PASS2":"********",
+    "ADMIN_USER_PASS2_ajxptype":"password",
+    "ENCODING":"fr_FR.UTF-8",
+    "ENCODING_ajxptype":"string",
+    "SERVER_URI":"/pydio-latest",
+    "SERVER_URI_ajxptype":"string",
+    "db_type_ajxptype":"text/json",
+    "db_type":{
+      "mysql_username":"DB_USER",
+      "mysql_use_mysqli":false,
+      "mysql_password":"DB_PASS",
+      "mysql_host":"DB_HOST",
+      "mysql_driver":"mysql",
+      "mysql_database":"DB_NAME",
+      "group_switch_value":"mysql"
+    },
+    "MAILER_ENABLE_ajxptype":"text/json",
+    "MAILER_ENABLE":{
+      "status":"no",
+      "group_switch_value":"no"
+    },
+    "APPLICATION_LANGUAGE":"en"
+  }
 }

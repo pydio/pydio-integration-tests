@@ -17,5 +17,22 @@
 #
 #  The latest code can be found at <http://pyd.io/>.
 #
-import pytest
-pytest.main(args=['-s'])
+import sys
+
+cmd = 'tests'
+param = ''
+if len(sys.argv) > 2 :
+    cmd = sys.argv[1]
+    param = sys.argv[2]
+
+if cmd == 'test':
+    import pytest
+    pytest.main(args=['-s'])
+elif cmd == 'install':
+    import json
+    from sdk.remote import PydioSdk
+    fname = param
+    with open(fname) as serverP:
+        server_data = json.load(serverP)
+        sdk = PydioSdk(url=server_data['host'])
+        sdk.install(server_data['install_data'])
