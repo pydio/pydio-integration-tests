@@ -51,18 +51,24 @@ def local_stat(path):
     return s
 
 
-def test_simple(server_def, workspace_id):
+def test_simple(server_def, workspace):
+    if 'fs' in workspace['skip']:
+        assert True
+        return
 
-    sdk = PydioSdk(server_def['host'], workspace_id, unicode(''), '', (server_def['user'], server_def['pass']))
+    sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']))
     sdk.stick_to_basic = True
 
     create_delete(sdk, '/pydio-simple-file')
     create_delete(sdk, '/fichié accentué'.decode('utf-8'))
 
 
-def test_upload(server_def, workspace_id):
+def test_upload(server_def, workspace):
+    if 'fs' in workspace['skip']:
+        assert True
+        return
 
-    sdk = PydioSdk(server_def['host'], workspace_id, unicode(''), '', (server_def['user'], server_def['pass']))
+    sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']))
     sdk.stick_to_basic = True
 
     stat = local_stat('resources/image.png')

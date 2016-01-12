@@ -23,9 +23,13 @@ from sdk.ajxp_conf import *
 
 setup_logging(logging.INFO)
 
-def test_zip(server_def, workspace_id):
 
-    sdk = PydioSdk(server_def['host'], workspace_id, unicode(''), '', (server_def['user'], server_def['pass']))
+def test_zip(server_def, workspace):
+    if 'zip' in workspace['skip']:
+        assert True
+        return
+
+    sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']))
     sdk.stick_to_basic = True
 
     path = '/pydio-simple-file'

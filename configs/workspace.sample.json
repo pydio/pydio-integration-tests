@@ -1,20 +1,22 @@
-[
+{
+  "install_data":
   {
     "DRIVER":"fs",
     "DRIVER_OPTIONS":
     {
       "AJXP_SLUG":"pydio-testing-fs",
       "DEFAULT_RIGHTS":"rw",
-      "CREATE":false,
+      "CREATE":true,
       "CHMOD_VALUE":"0666",
-      "RECYCLE_BIN":"recycle_bin",
+      "RECYCLE_BIN":"",
       "PAGINATION_THRESHOLD":500,
       "PAGINATION_NUMBER":200,
       "REMOTE_SORTING":true,
       "REMOTE_SORTING_DEFAULT_COLUMN":"ajxp_label",
       "REMOTE_SORTING_DEFAULT_DIRECTION":"asc",
-      "PATH":"AJXP_DATA_PATH/files"
+      "PATH":"AJXP_DATA_PATH/files/pydio-sync-fs"
     },
     "DISPLAY":"Pydio Testing FS"
-  }
-]
+  },
+  "skip":[]
+}

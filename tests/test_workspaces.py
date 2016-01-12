@@ -36,18 +36,18 @@ def ls(server_def, repo_id, test_path='/recycle_bin'):
     else:
         raise Exception("Cannot find /recycle_bin in listing")
 
-def test_workspaces(server_def, workspaces_defs):
-    for repo in workspaces_defs:
-        try:
-            logging.info("[TESTING WORKSPACE %s]" % repo['DISPLAY'])
-            new_id = create_repo(server_def, repo)
-            if repo["DRIVER_OPTIONS"]["RECYCLE_BIN"]:
-                testRes = ls(server_def, new_id)
-                assert testRes
-            logging.info("[> SUCCESS]")
-            logging.info(" ")
-        except Exception as e:
-            logging.error(e)
-            logging.error("[> ERROR]")
-            assert False
-        delete_repo(server_def, new_id)
+def test_workspaces(server_def, workspace_def):
+    repo = workspace_def['install_data']
+    try:
+        logging.info("[TESTING WORKSPACE %s]" % repo['DISPLAY'])
+        new_id = create_repo(server_def, repo)
+        if repo["DRIVER_OPTIONS"]["RECYCLE_BIN"]:
+            testRes = ls(server_def, new_id)
+            assert testRes
+        logging.info("[> SUCCESS]")
+        logging.info(" ")
+    except Exception as e:
+        logging.error(e)
+        logging.error("[> ERROR]")
+        assert False
+    delete_repo(server_def, new_id)

@@ -23,9 +23,12 @@ from sdk.ajxp_conf import *
 
 setup_logging(logging.INFO)
 
-def test_syncable(server_def, workspace_id):
+def test_syncable(server_def, workspace):
+    if 'syncable' in workspace['skip']:
+        assert True
+        return
 
-    sdk = PydioSdk(server_def['host'], workspace_id, unicode(''), '', (server_def['user'], server_def['pass']))
+    sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']))
     sdk.stick_to_basic = True
 
     path = '/pydio-sync-file'

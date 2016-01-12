@@ -33,6 +33,14 @@ def pytest_generate_tests(metafunc):
             i += 1
         metafunc.parametrize("server_config_file", files)
 
+    if 'workspace_config_file' in metafunc.fixturenames:
+        i = 0
+        files = []
+        while os.path.exists('configs/workspace.' + str(i) + '.json'):
+            files.append('configs/workspace.' + str(i) + '.json')
+            i += 1
+        metafunc.parametrize("workspace_config_file", files)
+
 
 @pytest.fixture
 def server_def(server_config_file):
@@ -42,23 +50,19 @@ def server_def(server_config_file):
 
 
 @pytest.fixture
-def workspaces_defs():
-    repo_file = 'configs/workspaces.json'
-    with open(repo_file) as handler:
+def workspace_def(workspace_config_file):
+    with open(workspace_config_file) as handler:
         jDict = json.load(handler)
     return jDict
 
 
 @pytest.fixture
-def workspace_id(request, server_def):
-    repo_file = 'configs/workspaces.json'
-    with open(repo_file) as handler:
-        workspaces_defs = json.load(handler)
-
+def workspace(request, server_def, workspace_def):
     from sdk.ajxp_conf import create_repo, delete_repo
-    repo_id = create_repo(server_def, workspaces_defs[0])
+    repo_id = create_repo(server_def, workspace_def['install_data'])
+    workspace_def['id'] = repo_id
     def fin():
         print ("teardown repo")
         delete_repo(server_def, repo_id)
     request.addfinalizer(fin)
-    return repo_id
+    return workspace_def
