@@ -1104,6 +1104,8 @@ class PydioSdk():
         # Now Apply Installer Form
         json_form_data['db_type'] = json.dumps(json_form_data['db_type'])
         json_form_data['MAILER_ENABLE'] = json.dumps(json_form_data['MAILER_ENABLE'])
+        import time
+        json_form_data['APPLICATION_WELCOME'] += ' - ' + time.strftime("%Y-%m-%d %H:%M")
 
         resp = s.post(
             url=self.base_url.replace('/api/', '/?secure_token='+token+'&get_action=apply_installer_form'),
