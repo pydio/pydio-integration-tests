@@ -64,10 +64,6 @@ def test_simple(server_def, workspace):
 
 
 def test_upload(server_def, workspace):
-    if 'fs' in workspace['skip']:
-        assert True
-        return
-
     sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']))
     sdk.stick_to_basic = True
 

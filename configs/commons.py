@@ -37,6 +37,11 @@ def pytest_generate_tests(metafunc):
         i = 0
         files = []
         while os.path.exists('configs/workspace.' + str(i) + '.json'):
+            with open('configs/workspace.' + str(i) + '.json') as handler:
+                j_dict = json.load(handler)
+                if metafunc.module.__name__ in j_dict['skip']:
+                    i += 1
+                    continue
             files.append('configs/workspace.' + str(i) + '.json')
             i += 1
         metafunc.parametrize("workspace_config_file", files)

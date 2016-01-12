@@ -19,7 +19,7 @@
 #
 import sys
 
-cmd = 'tests'
+cmd = 'test'
 param = ''
 if len(sys.argv) > 2 :
     cmd = sys.argv[1]

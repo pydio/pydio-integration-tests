@@ -25,10 +25,6 @@ setup_logging(logging.INFO)
 
 
 def test_zip(server_def, workspace):
-    if 'zip' in workspace['skip']:
-        assert True
-        return
-
     sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']))
     sdk.stick_to_basic = True
 
