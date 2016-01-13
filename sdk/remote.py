@@ -1089,6 +1089,7 @@ class PydioSdk():
     def install(self, json_form_data):
 
         session_access = self.base_url.replace('/api/', '/')
+        print "Installing server " + session_access
         s = requests.Session()
         # Make sure we go through the bootSequence to create RootGroup
         s.get(
