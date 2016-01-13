@@ -1088,10 +1088,25 @@ class PydioSdk():
 
     def install(self, json_form_data):
 
-        # Cannot use REST, Get Token First
+        session_access = self.base_url.replace('/api/', '/')
         s = requests.Session()
+        # Make sure we go through the bootSequence to create RootGroup
+        s.get(
+            url=session_access,
+            timeout=self.timeout,
+            verify=self.verify_ssl,
+            proxies=self.proxies
+        )
+        s.get(
+            url=session_access + '/?ignore_tests=true',
+            timeout=self.timeout,
+            verify=self.verify_ssl,
+            proxies=self.proxies
+        )
+
+        # Cannot use REST, Get Token First
         resp1 = s.get(
-            url=self.base_url.replace('/api/', '') + '/?get_action=get_boot_conf',
+            url=session_access + '/?get_action=get_boot_conf',
             timeout=self.timeout,
             verify=self.verify_ssl,
             proxies=self.proxies
@@ -1108,7 +1123,7 @@ class PydioSdk():
         json_form_data['APPLICATION_WELCOME'] += ' - ' + time.strftime("%Y-%m-%d %H:%M")
 
         resp = s.post(
-            url=self.base_url.replace('/api/', '/?secure_token='+token+'&get_action=apply_installer_form'),
+            url= session_access + '/?secure_token='+token+'&get_action=apply_installer_form',
             data=json_form_data,
             timeout=self.timeout,
             verify=self.verify_ssl,
