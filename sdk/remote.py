@@ -1095,13 +1095,15 @@ class PydioSdk():
             url=session_access,
             timeout=self.timeout,
             verify=self.verify_ssl,
-            proxies=self.proxies
+            proxies=self.proxies,
+            headers={'Accept': 'text/html'}
         )
         s.get(
             url=session_access + '/?ignore_tests=true',
             timeout=self.timeout,
             verify=self.verify_ssl,
-            proxies=self.proxies
+            proxies=self.proxies,
+            headers={'Accept': 'text/html'}
         )
 
         # Cannot use REST, Get Token First
