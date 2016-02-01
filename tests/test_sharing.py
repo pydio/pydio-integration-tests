@@ -22,7 +22,7 @@ from sdk.ajxp_conf import *
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 import time
-
+import pydioenv
 
 def detect_shared_link(url, expect_working=True):
     driver = webdriver.Firefox()
@@ -56,7 +56,7 @@ def local_stat(path):
 
 
 def test_shared_link(server_def, workspace):
-    sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']))
+    sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']), skip_ssl_verify=pydioenv.noverify)
 
     sdk.upload(local='resources/image.png', local_stat=local_stat('resources/image.png'), path=unicode('/image.png'))
     link = sdk.share('Shared File', 'Description', '', '', '', 'true', 'true', u'/image.png', '', 'false')

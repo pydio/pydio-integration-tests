@@ -23,11 +23,13 @@ import xml.etree.ElementTree as ET
 from configs.config_logger import setup_logging
 from configs.commons import *
 from sdk.ajxp_conf import *
+import pydioenv
 
 setup_logging(logging.INFO)
 
+
 def ls(server_def, repo_id, test_path='/recycle_bin'):
-    sdk = PydioSdk(server_def['host'], repo_id, unicode(''), '', (server_def['user'], server_def['pass']))
+    sdk = PydioSdk(server_def['host'], repo_id, unicode(''), '', (server_def['user'], server_def['pass']), skip_ssl_verify=pydioenv.noverify)
     sdk.stick_to_basic = True
     result = sdk.list('/')
     inner_debug(result)

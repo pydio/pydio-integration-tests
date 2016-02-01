@@ -21,6 +21,8 @@
 from configs.config_logger import setup_logging
 from configs.commons import *
 from sdk.ajxp_conf import *
+import os
+import pydioenv
 
 setup_logging(logging.INFO)
 
@@ -41,7 +43,6 @@ def create_delete(sdk, path):
 
 
 def local_stat(path):
-    import os
     stat_result = os.stat(path)
     s = dict()
     s['size'] = stat_result.st_size
@@ -56,7 +57,7 @@ def test_simple(server_def, workspace):
         assert True
         return
 
-    sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']))
+    sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']), skip_ssl_verify=pydioenv.noverify)
     sdk.stick_to_basic = True
 
     create_delete(sdk, '/pydio-simple-file')
@@ -64,7 +65,7 @@ def test_simple(server_def, workspace):
 
 
 def test_upload(server_def, workspace):
-    sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']))
+    sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']), skip_ssl_verify=pydioenv.noverify)
     sdk.stick_to_basic = True
 
     stat = local_stat('resources/image.png')
@@ -79,5 +80,4 @@ def test_upload(server_def, workspace):
     assert new_stat['size'] == stat['size']
 
     sdk.delete('/image.png')
-    import os
     os.unlink('resources/downloaded_image.png')

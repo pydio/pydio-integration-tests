@@ -20,12 +20,13 @@
 from configs.config_logger import setup_logging
 from configs.commons import *
 from sdk.ajxp_conf import *
+import pydioenv
 
 setup_logging(logging.INFO)
 
 
 def test_zip(server_def, workspace):
-    sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']))
+    sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']), skip_ssl_verify=pydioenv.noverify)
     sdk.stick_to_basic = True
 
     path = '/pydio-simple-file'

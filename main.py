@@ -18,6 +18,7 @@
 #  The latest code can be found at <http://pyd.io/>.
 #
 import sys
+import pydioenv
 
 cmd = 'test'
 param = ''
@@ -34,7 +35,7 @@ elif cmd == 'install':
     fname = param
     with open(fname) as serverP:
         server_data = json.load(serverP)
-        sdk = PydioSdk(url=server_data['host'])
+        sdk = PydioSdk(url=server_data['host'], skip_ssl_verify=pydioenv.noverify)
         response = sdk.install(server_data['install_data'])
         if response != 'OK':
             exit(1)
