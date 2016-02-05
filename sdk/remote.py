@@ -1041,7 +1041,6 @@ class PydioSdk():
     def share(self, ws_label, ws_description, password, expiration, downloads, can_read, can_download, paths,
                     link_handler, can_write):
         data = dict()
-        #data["get_action"] = "share"
         data["sub_action"] = "create_minisite"
         data["guest_user_pass"] = password
         data["create_guest_user"] = "true"
@@ -1050,17 +1049,18 @@ class PydioSdk():
         data["downloadlimit"] = downloads
         data["repo_description"] = ws_description
         data["repo_label"] = ws_label
-        #data["nodes[]"] = paths
         data["custom_handle"] = link_handler
-        #data["file"] = paths
-        #data["dir"] = os.path.dirname(paths)
 
         if can_download == "true":
             data["simple_right_download"] = "on"
         if can_read == "true":
             data["simple_right_read"] = "on"
+        else:
+            data["minisite_layout"] = "ajxp_unique_dl"
         if can_write == "true":
             data["simple_right_write"] = "on"
+
+        print data
 
         resp = requests.post(
                     url=self.url+'/share/public' + self.urlencode_normalized(paths),
