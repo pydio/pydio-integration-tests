@@ -66,8 +66,21 @@ def workspace(request, server_def, workspace_def):
     from sdk.ajxp_conf import create_repo, delete_repo
     repo_id = create_repo(server_def, workspace_def['install_data'])
     workspace_def['id'] = repo_id
+
     def fin():
         print ("teardown repo")
         delete_repo(server_def, repo_id)
     request.addfinalizer(fin)
     return workspace_def
+
+
+@pytest.fixture
+def webdriver(request):
+    from selenium import webdriver
+    driver = webdriver.Firefox()
+
+    def fin():
+        driver.close()
+
+    request.addfinalizer(fin)
+    return driver
