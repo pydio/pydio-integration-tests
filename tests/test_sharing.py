@@ -19,29 +19,36 @@
 #
 from configs.commons import *
 from sdk.ajxp_conf import *
-from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 import time
 
 
-def detect_shared_link(url, expect_working=True):
-    driver = webdriver.Firefox()
-    driver.get(url)
+def element_present(webdriver, id='', css=''):
+    try:
+        if id:
+            webdriver.find_element_by_id(id)
+        else:
+            webdriver.find_element_by_css_selector(css)
+    except NoSuchElementException:
+        return False
+
+    return True
+
+
+def detect_shared_link(webdriver, url, expect_working=True, preview=True, download=True):
+    webdriver.get(url)
     time.sleep(5)
 
-    assert "Pydio" in driver.title
+    assert "Pydio" in webdriver.title
 
-    try:
-        if expect_working:
-            element = driver.find_element_by_id('mainImage')
-        else:
-            element = driver.find_element_by_css_selector('div.hash_load_error')
-    except NoSuchElementException:
-        assert False
-
-    assert element
-
-    driver.close()
+    if expect_working:
+        preview_block_test = element_present(webdriver, id='mainImage')
+        assert (preview and preview_block_test) or (not preview and not preview_block_test)
+        download_block_test = element_present(webdriver, id='download_button')
+        assert (download and download_block_test) or (not download and not download_block_test)
+    else:
+        error_block_test = element_present(webdriver, css='div.hash_load_error')
+        assert error_block_test
 
 
 def local_stat(path):
@@ -54,13 +61,25 @@ def local_stat(path):
     s['inode'] = stat_result.st_ino
     return s
 
-
-def test_shared_link(server_def, workspace):
+@pytest.mark.parametrize("preview,download", [
+    (True, True),
+    (True, False),
+    (False, True),
+])
+def test_shared_link(server_def, workspace, webdriver, preview, download):
     sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']))
 
+    dl_right = 'true' if download else 'false'
+    read_right = 'true' if preview else 'false'
+    print 'read =' + read_right
+    print 'dl =' + dl_right
     sdk.upload(local='resources/image.png', local_stat=local_stat('resources/image.png'), path=unicode('/image.png'))
-    link = sdk.share('Shared File', 'Description', '', '', '', 'true', 'true', u'/image.png', '', 'false')
-    detect_shared_link(link, expect_working=True)
+    link = sdk.share(ws_label='Shared File', ws_description='Description', password='', expiration='', downloads='',
+                     can_read=read_right, can_download=dl_right, paths=u'/image.png', link_handler='', can_write='false')
+    detect_shared_link(webdriver, link, expect_working=True, preview=preview, download=download)
+
+    # Unshare. At first pass, detect correctly unshared.
     sdk.unshare(u'/image.png')
-    detect_shared_link(link, expect_working=False)
+    if preview and download:
+        detect_shared_link(webdriver, link, expect_working=False)
     sdk.delete('/image.png')
