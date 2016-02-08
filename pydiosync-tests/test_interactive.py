@@ -92,7 +92,8 @@ if __name__ == "__main__":
     parser.add_argument('--onlypics', help="Only create pictures", type=bool, default=True)
     parser.add_argument('--password', '-p', help="Your Pydio ASCII password (risky), use -p '' to get a prompt", default='pydiopassword')
     parser.add_argument('--check', help="This mode is used to check a workspace id. Creates a local snapshot and compares it to a distant sync.", type=bool, default=False)
-    parser.add_argument('--synctest', help="Do a sync test, - BEWARE DELETES FILES -. An integer value can specify a delay in second between every action", default="")
+    parser.add_argument('--synctest', help="Do a sync test, - BEWARE DELETES FILES -. An integer value can specify a delay in second between every action", default=0, type=int)
+    parser.add_argument('--filetest', help="Creates some files, (todo optional delay between creation)", default=0)
     args = parser.parse_args()
 
     print("Loading config... " + args.config)
@@ -121,7 +122,7 @@ if __name__ == "__main__":
             if len(cleaned["missing_local"]) == len(cleaned["missing_remote"]) == 0:
                 print("Sync ✔")
 
-        if args.synctest == "bot":
+        if args.synctest > 0:
             b = Bot(conf[args.job]["directory"])
             try:
                 waittime = int(args.synctest)
@@ -131,7 +132,7 @@ if __name__ == "__main__":
             print("--- Things done ---")
             print(b)
 
-        if args.synctest == "files":
+        if args.filetest > 0:
             # Create some files
             if not args.noconfirm:
                 confirm = input("Will create " + str(args.nbfiles) + " images in " + FLD + " (y/n) \n >")

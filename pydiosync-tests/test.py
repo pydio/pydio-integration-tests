@@ -25,7 +25,7 @@ def randname(minsize=1):
     """
     alpha = string.ascii_letters + " éàèàòçù" # forbidden -()$%£$€
     name = alpha[random.randint(0, len(alpha)-1)]
-    while random.random() > .25 or len(name) < minsize:
+    while (random.random() > .25 or len(name) < minsize) and len(name) < 40:
         name += alpha[random.randint(0, len(alpha)-1)]
     return name
 
@@ -195,6 +195,8 @@ class Bot:
         """
         action = Action()
         task = random.choice(['CREATE', 'DELETE', 'COPY', 'MOVE', 'RENAME'])
+        if len(os.listdir(self.fld)) == 0:
+            task = 'CREATE'
         if task == 'CREATE':
             action.path = os.path.join(self.fld, randname(3))
             createfolderifnotthere(action.path)
@@ -243,6 +245,8 @@ class Bot:
         """
         action = Action()
         task = random.choice(['CREATE', 'DELETE', 'COPY', 'MOVE', 'MODIFY', 'RENAME'])
+        if len(os.listdir(self.fld)) == 0:
+            task = 'CREATE'
         if task == 'CREATE':
             action.path = createImg(os.path.join(self.fld, randname(3)), random.choice([".jpg", ".png", ".tiff", ".bmp"]))
         elif task == 'DELETE':
@@ -292,9 +296,9 @@ class Bot:
 
     def __repr__(self):
         res = ''
-        for i in self.history:
+        for i in sorted(self.history.keys()):
             res += i
-            res += "\n " + str(self.history[i])
+            res += "\n " + str(self.history[i]) + "\n"
         return res
 # end of Bot
 
