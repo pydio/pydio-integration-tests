@@ -16,18 +16,21 @@
 
 Set up the environment
 ======================
-
+```sh
 virtualenv pydio3 --python=python3.5
 cd pydio3
 source bin/activate
 pip install -r requirements.txt
+```
 
 Example usage
 =============
-python test_interactive.py
+`python test_interactive.py`
 
 Build the documentation
 =======================
+```sh
 pip install -r doc/requirements.txt
 cd doc
 make html
+```
