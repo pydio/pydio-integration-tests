@@ -15,7 +15,7 @@
 #  along with Pydio.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import os, random, time, shutil, humanize, string, math
+import os, random, time, shutil, humanize, string, math, sqlite3, re
 from PIL import Image
 
 random.seed(time.time()) # is it needed?
@@ -25,9 +25,38 @@ def randname(minsize=1):
     """
     alpha = string.ascii_letters + " éàèàòçù" # forbidden -()$%£$€
     name = alpha[random.randint(0, len(alpha)-1)]
-    while (random.random() > .25 or len(name) < minsize) and len(name) < 40:
+    while (random.random() > .25 or len(name) < minsize):
         name += alpha[random.randint(0, len(alpha)-1)]
     return name
+
+def newfilename(filename, minsize=1, maxsize=20):
+    """ Produces a new name for a file, keeps the extension
+    """
+    dotpos = filename.rfind('.')
+    newname = randname(minsize)
+    if dotpos > -1:
+        return newname[:maxsize] + filename[dotpos:]
+    else:
+        return newname[:maxsize]
+
+def gencopypath(filename):
+    """ Create a new path name for a copy of a file, the path keeps the extension
+        test.txt -> test copy.txt
+    """
+    maxsearch = filename.rfind('/')
+    if maxsearch > -1:  # only search up to parent folder
+        dotpos = filename.rfind('.', maxsearch)
+    else:
+        dotpos = filename.rfind('.')
+    if dotpos > -1:
+        path = filename[:dotpos] + ' copy'
+    else:
+        path = filename + ' copy'
+    i = 1
+    while os.path.exists(path + str(i)):
+        i += 1
+    path = path + str(i)
+    return path
 
 def lsrec(fld, depth=0):
     """ Recursive folder list
@@ -208,7 +237,11 @@ class Bot:
                 action.info = "Failed to select a random folder to copy"
             else:
                 action.path = os.path.join(self.fld, randfolder)
-                path = action.path + ' copy'
+                try:
+                    randfolder = randfolder.replace(re.search(" copy\d*", randfolder).group(), '')
+                except AttributeError:
+                    pass
+                path = os.path.join(self.fld, randfolder) + ' copy'
                 i = 1
                 while os.path.exists(path + str(i)):
                     i += 1
@@ -244,7 +277,7 @@ class Bot:
         """ Files : CREATE, DELETE, COPY, MOVE, MODIFY, RENAME
         """
         action = Action()
-        task = random.choice(['CREATE', 'DELETE', 'COPY', 'MOVE', 'MODIFY', 'RENAME'])
+        task = random.choice(['CREATE', 'DELETE', 'COPY', 'MOVE', 'MODIFY', 'RENAME', 'MOVEANDRENAME'])
         if len(os.listdir(self.fld)) == 0:
             task = 'CREATE'
         if task == 'CREATE':
@@ -260,25 +293,31 @@ class Bot:
             if action.path == "":
                 action.info = "Failed to select a file to copy"
             else:
-                path = action.path + ' copy'
-                i = 1
-                while os.path.exists(path + str(i)):
-                    i += 1
-                path = path + str(i)
+                path = gencopypath(action.path)
                 shutil.copy2(action.path, path)
         elif task == 'MOVE':
             action.path = selectrandfile(self.fld)
             if action.path == "":
                 action.info = "Failed to select a file to move"
             else:
-                path = action.path + randname(3)
-                shutil.move(action.path, path)
+                path = selectrandfolder(self.fld)
+                if path != '':
+                    shutil.move(action.path, path)
         elif task == 'RENAME':
             action.path = selectrandfile(self.fld)
             if action.path == "":
                 action.info = "Failed to select a file to rename"
             else:
-                shutil.move(action.path, os.path.join(self.fld, randname()))
+                path = os.path.join(self.fld, newfilename(action.path, 3, 50))
+                shutil.move(action.path, path)
+        elif task == 'MOVEANDRENAME':
+            action.path = selectrandfile(self.fld)
+            if action.path == "":
+                action.info = "Failed to select a file to rename"
+            else:
+                randfld = selectrandfolder(self.fld)
+                path = os.path.join(self.fld, randfld, newfilename(action.path, 3, 50))
+                shutil.move(action.path, path)
         elif task == 'MODIFY':
             action.path = selectrandfile(self.fld)
             if action.path == "":
@@ -294,9 +333,21 @@ class Bot:
             pass
         return action
 
+    def savehistory(dbname):
+        """ writes the history to a DB for sorting and shit
+        """
+        db = sqlite3.connect(dbname)
+        # create table actions if not exists (id PRIMARY KEY, time DATE, node TEXT, node_new TEXT)
+        #for i in self.history:
+            #stm = "insert into actions (time, node, node_new, info) values ({0}, {1}, {2}, {3})".format(self.history[i], self.history[i][
+            #db.execute(stm)
+        db.commit()
+        db.close()
+
     def __repr__(self):
         res = ''
-        for i in sorted(self.history.keys()):
+        temp = 0
+        for i in self.history:
             res += i
             res += "\n " + str(self.history[i]) + "\n"
         return res

@@ -123,7 +123,7 @@ if __name__ == "__main__":
             cleaned = parseWithExcludes(diff, excludes)
             print(cleaned)
             if len(cleaned["missing_local"]) == len(cleaned["missing_remote"]) == 0:
-                print("Sync ✔")
+                print("Synchronised ✔")
 
         if args.synctest > 0:
             b = Bot(conf[args.job]["directory"])
@@ -134,6 +134,8 @@ if __name__ == "__main__":
                 b.dosomethings(args.nbfiles, 1)
             print("--- Things done ---")
             print(b)
+            with open('test_interactive.log', 'w') as log:
+                log.write(str(b))
 
         if args.filetest > 0:
             # Create some files
