@@ -47,15 +47,18 @@ def gencopypath(filename):
     if maxsearch > -1:  # only search up to parent folder
         dotpos = filename.rfind('.', maxsearch)
     else:
-        dotpos = filename.rfind('.')
+        dotpos = filename.rfind('.')  # probably never called
     if dotpos > -1:
         path = filename[:dotpos] + ' copy'
     else:
         path = filename + ' copy'
-    i = 1
+    i = 0
     while os.path.exists(path + str(i)):
         i += 1
-    path = path + str(i)
+    if dotpos > -1:
+        path = path + str(i) + filename[dotpos:]
+    else:
+        path = path + str(i)
     return path
 
 def lsrec(fld, depth=0):
@@ -172,8 +175,17 @@ class Action:
         more
         info [ERROR]
     """
-    pass
-
+    def __repr__(self):
+        res = ''
+        if hasattr(self, 'path'):
+            res = str(self.path) + "\n"
+        if hasattr(self, 'details'):
+            res += " [details]" + str(self.details) + "\n"
+        if hasattr(self, 'more'):
+            res += " [more]" + str(self.more) + "\n"
+        if hasattr(self, 'info'):
+            res += " [info]" + str(self.info) + "\n"
+        return res
 
 class Bot:
     """ A bot in this context is a filesystem bot, it creates, deletes, copies, moves things around in a target_fld
@@ -207,6 +219,7 @@ class Bot:
         else:  # file
             action = self.dorandomfileaction()
             logaction(action)
+        return action
 
     def dosomethings(self, nbthings=2, wait=1):
         """ Do actions in the fld with with the specified delay

@@ -124,11 +124,22 @@ if __name__ == "__main__":
 
         if args.synctest > 0:
             b = Bot(conf[args.job]["directory"])
+            """
             try:
                 waittime = int(args.synctest)
                 b.dosomethings(args.nbfiles, waittime)
-            except ValueError:
+            except ValueError:  # if the arg wasn't an int
                 b.dosomethings(args.nbfiles, 1)
+            """
+            while True:
+                try:
+                    leinput = input('[c]ontinue|[q]uit >')
+                    if leinput == '' or leinput[0] == 'c':
+                        print(b.dosomething())
+                    elif leinput[0] == 'q':
+                        break
+                except KeyboardInterrupt:
+                    pass
             print("--- Things done ---")
             print(b)
             with open('test_interactive.log', 'w') as log:
@@ -156,7 +167,7 @@ if __name__ == "__main__":
             # Check Syncs contents'
     else: 
         print("Not enough information to proceed..." + "\n \033[92m Example usage: \
-                \n\tpython test_interactive.py --job name_of_job --synctest bot --nbfiles 100 \
+                \n\tpython test_interactive.py --job name_of_job --synctest 2 --nbfiles 100 \
                 \n\tpython test_interactive.py --job name_of_job --check True\033[37m")
         print("List of available jobs:")
         for i in conf:
