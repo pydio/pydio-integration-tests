@@ -18,6 +18,7 @@ import argparse, json, time, os, unicodedata
 import humanize, getpass, fnmatch
 from test import manyfilestest, manyimagestest, randname, Bot
 from watchdog.utils.dirsnapshot import DirectorySnapshot as dirsnap
+import platform
 
 import sys
 sys.path.append('..')
@@ -49,8 +50,7 @@ def docheck(sdk, path):
         missing = {}
         for k in remotefiles.keys():
             try:
-                #localfiles[k]
-                localfiles.remove(unicodedata.normalize('NFD', k))
+                localfiles.remove(os.path.normpath(k))
             except KeyError:
                 missing[k] = time.time()
         return {"missing_local" : missing, "missing_remote": localfiles}
@@ -85,7 +85,10 @@ def parseWithExcludes(diff, excludes):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', help="A configs.json file to be loaded", default="/Users/" + os.getlogin() + "/Library/Application Support/Pydio/configs.json")
+    if platform.system() == 'Windows':
+        parser.add_argument('--config', help="A configs.json file to be loaded", default=os.getenv('APPDATA') + "//Pydio//configs.json")
+    else:
+        parser.add_argument('--config', help="A configs.json file to be loaded", default="/Users/" + os.getlogin() + "/Library/Application Support/Pydio/configs.json")
     parser.add_argument('--job', help="The job to use to create some files", default="my-files")
     parser.add_argument('--noconfirm', help="Proceed without confirmation", type=bool, default=False)
     parser.add_argument('--nbfiles', help="Number of files to create", default=50, type=int)
