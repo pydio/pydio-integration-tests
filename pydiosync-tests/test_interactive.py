@@ -50,7 +50,10 @@ def docheck(sdk, path):
         missing = {}
         for k in remotefiles.keys():
             try:
-                localfiles.remove(os.path.normpath(k))
+                if platform.system() == 'Windows':
+                    localfiles.remove(os.path.normpath(k))
+                else:
+                    localfiles.remove(unicodedata.normalize('NFD', k))
             except KeyError:
                 missing[k] = time.time()
         return {"missing_local" : missing, "missing_remote": localfiles}
