@@ -95,7 +95,10 @@ def selectrandfile(fld):
     """
     # TODO use excludes
     f = selectrand(os.path.isfile, fld)
-    return f if f.find('.DS_STORE') != -1 else ''
+    if f.find('.DS_STORE') == -1: 
+        return f 
+    else: 
+        return ''
 
 def selectrandfile2(fld, attempts=5):
     """ try to select a file several times
