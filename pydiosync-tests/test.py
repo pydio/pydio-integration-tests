@@ -27,7 +27,7 @@ def randname(minsize=1):
     name = alpha[random.randint(0, len(alpha)-1)]
     while (random.random() > .25 or len(name) < minsize):
         name += alpha[random.randint(0, len(alpha)-1)]
-    return name
+    return name if name[0] != ' ' else name[1:]
 
 def newfilename(filename, minsize=1, maxsize=20):
     """ Produces a new name for a file, keeps the extension
@@ -93,8 +93,18 @@ def selectrandfolder(fld):
 def selectrandfile(fld):
     """ Randomly selects a file inside fld
     """
-    return selectrand(os.path.isfile, fld)
+    # TODO use excludes
+    f = selectrand(os.path.isfile, fld)
+    return f if f.find('.DS_STORE') == -1 else ''
 
+def selectrandfile2(fld, attempts=5):
+    """ try to select a file several times
+    """
+    f = ""
+    while attempts > 0 and f == "":
+        attempts -= 1
+        f = selectrandfile(fld)
+    return f
 
 def deletefolder(fld, force=False):
     if os.path.exists(fld):
@@ -123,8 +133,8 @@ def listfolder(fld):
         if os.path.isdir(os.path.join(fld, i)):
             listfolder(os.path.join(fld,i))
 
-def createImg(name, ext=".jpg"):
-    img = Image.new('RGB', (1024, 768), 'white')
+def createImg(name, ext=".jpg", sizex=1024, sizey=768):
+    img = Image.new('RGB', (sizex, sizey), 'white')
     pixels = img.load()
     for i in range(img.size[0]):
         for j in range(img.size[1]):
@@ -160,8 +170,8 @@ def manyimagestest(nbImages, fld):
     total = 0
     while nbImages > 0:
         nbImages -= 1
-        full_path = fld + "/" + randname(6)
-        full_path = createImg(full_path)
+        full_path = fld + "/" + randname(9)
+        full_path = createImg(full_path, sizex=10, sizey=10)
         print("[DEBUG] created image...")
         size = os.path.getsize(full_path)
         print("        " + humanize.naturalsize(size) + " " + full_path)
@@ -171,7 +181,7 @@ def manyimagestest(nbImages, fld):
 
 class Action:
     """ path
-        details
+        [details]
         more
         info [ERROR]
     """
@@ -180,11 +190,12 @@ class Action:
         if hasattr(self, 'path'):
             res = str(self.path) + "\n"
         if hasattr(self, 'details'):
-            res += " [details]" + str(self.details) + "\n"
+            for i in self.details:
+                res += " [details] " + str(self.details[i]) + "\n"
         if hasattr(self, 'more'):
-            res += " [more]" + str(self.more) + "\n"
+            res += " [more] " + str(self.more) + "\n"
         if hasattr(self, 'info'):
-            res += " [info]" + str(self.info) + "\n"
+            res += " [info] " + str(self.info) + "\n"
         return res
 
 class Bot:
@@ -209,10 +220,9 @@ class Bot:
                 print(action.info)
             elif hasattr(action, "path"):
                 if action.path in self.history:
-                    for k in action.details:
-                        self.history[action.path][k] = action.details[k]
+                    self.history[action.path].append(action.details)
                 else:
-                    self.history[action.path] = action.details
+                    self.history[action.path] = [action.details]
         if random.random() < .3:  # folder
             action = self.dorandomfolderaction()
             logaction(action)
@@ -279,7 +289,7 @@ class Bot:
                 path = action.path + randname(3)
                 shutil.move(action.path, path)
 
-        action.details = {time.time(): "Folder, " + task}
+        action.details = {"at":time.time(), "did": "Folder, " + task}
         try:  # for actions that use 2 files
             action.details["more"] = path
         except NameError:
@@ -296,20 +306,20 @@ class Bot:
         if task == 'CREATE':
             action.path = createImg(os.path.join(self.fld, randname(3)), random.choice([".jpg", ".png", ".tiff", ".bmp"]))
         elif task == 'DELETE':
-            action.path = selectrandfile(self.fld)
+            action.path = selectrandfile2(self.fld)
             if action.path == "":
                 action.info = "Failed to select a file to delete"
             else:
                 os.remove(action.path)
         elif task == 'COPY':
-            action.path = selectrandfile(self.fld)
+            action.path = selectrandfile2(self.fld)
             if action.path == "":
                 action.info = "Failed to select a file to copy"
             else:
                 path = gencopypath(action.path)
                 shutil.copy2(action.path, path)
         elif task == 'MOVE':
-            action.path = selectrandfile(self.fld)
+            action.path = selectrandfile2(self.fld)
             if action.path == "":
                 action.info = "Failed to select a file to move"
             else:
@@ -317,14 +327,14 @@ class Bot:
                 if path != '':
                     shutil.move(action.path, path)
         elif task == 'RENAME':
-            action.path = selectrandfile(self.fld)
+            action.path = selectrandfile2(self.fld)
             if action.path == "":
                 action.info = "Failed to select a file to rename"
             else:
                 path = os.path.join(self.fld, newfilename(action.path, 3, 50))
                 shutil.move(action.path, path)
         elif task == 'MOVEANDRENAME':
-            action.path = selectrandfile(self.fld)
+            action.path = selectrandfile2(self.fld)
             if action.path == "":
                 action.info = "Failed to select a file to rename"
             else:
@@ -332,14 +342,13 @@ class Bot:
                 path = os.path.join(self.fld, randfld, newfilename(action.path, 3, 50))
                 shutil.move(action.path, path)
         elif task == 'MODIFY':
-            action.path = selectrandfile(self.fld)
+            action.path = selectrandfile2(self.fld)
             if action.path == "":
                 action.info = "Failed to select a file to modify"
             else:
                 with open(action.path, 'wb') as f:
-                    f.seek(2)
-                    f.write(b"\x41\x80")
-        action.details = {time.time(): "File, " + task}
+                    f.write((random.choice(['a', 'b', 'c'])*random.randint(100, 10000)).encode('utf-8'))
+        action.details = {"at": time.time(), "did": "File, " + task}
         try:  # for actions that use 2 files
             action.details["more"] = path
         except NameError:
@@ -359,12 +368,19 @@ class Bot:
 
     def __repr__(self):
         res = ''
-        temp = 0
         for i in self.history:
             res += i
-            res += "\n " + str(self.history[i]) + "\n"
+            for l in self.history[i]:
+                res += "\n " + str(l) + "\n"
         return res
 # end of Bot
+
+def dostuff():
+    for i in range(0, 200):
+        lefld = randname(20)
+        path = "/Users/thomas/Pydio/tests/big"
+        createfolderifnotthere(os.path.join(path, lefld))
+        manyimagestest(1000, os.path.join(path, lefld))
 
 if __name__ == "__main__":
     FLD = "/Users/thomas/Pydio/tests/syncroVBox"

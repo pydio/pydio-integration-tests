@@ -36,11 +36,16 @@ def toset(prefix, pathset):
         rel_path.add(p.replace(prefix, ''))
     return rel_path
 
-def docheck(sdk, path):
+def docheck(sdk, path, subfolder=""):
     """ Using PydioSdk connects to a server and compares the list of files at 
         :param path: with the list of files at the :param sdk:
     """
     remote_ls = sdk.list(recursive='true')
+    if subfolder != "":
+        remote2 = {}
+        for p in remote_ls:
+            remote2[p.replace(subfolder, "", 1)] = remote_ls[p]
+        remote_ls = remote2
     local_ls = dirsnap(path)
     def dodiff(remotefiles, localfiles):
         """ from {'path/to/file': file, ...}, set('path/to/file', ...) do a
@@ -57,6 +62,7 @@ def docheck(sdk, path):
             except KeyError:
                 missing[k] = time.time()
         return {"missing_local" : missing, "missing_remote": localfiles}
+    #print(remote_ls)
     diff = dodiff(remote_ls, toset(path, local_ls.paths))
     return diff
 
@@ -122,7 +128,7 @@ if __name__ == "__main__":
             sdk = PydioSdk(conf[args.job]['server'], conf[args.job]['workspace'], conf[args.job]['remote_folder'], '',
                 auth=(conf[args.job]['user'], PASSWORD),
                 skip_ssl_verify=True)  # FIXME: only for development
-            diff = docheck(sdk, conf[args.job]['directory'])
+            diff = docheck(sdk, conf[args.job]['directory'], conf[args.job]['remote_folder'])
             cleaned = parseWithExcludes(diff, excludes)
             print(cleaned)
             if len(cleaned["missing_local"]) == len(cleaned["missing_remote"]) == 0:
@@ -130,13 +136,11 @@ if __name__ == "__main__":
 
         if args.synctest > 0:
             b = Bot(conf[args.job]["directory"])
-            """
             try:
                 waittime = int(args.synctest)
                 b.dosomethings(args.nbfiles, waittime)
             except ValueError:  # if the arg wasn't an int
                 b.dosomethings(args.nbfiles, 1)
-            """
             while True:
                 try:
                     leinput = input('[c]ontinue|[q]uit >')
