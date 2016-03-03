@@ -46,18 +46,25 @@ def gencopypath(filename):
     maxsearch = filename.rfind('/')
     if maxsearch > -1:  # only search up to parent folder
         dotpos = filename.rfind('.', maxsearch)
+        copypos = filename.rfind('copy', maxsearch)
     else:
+        print("REMOVE ME?")
         dotpos = filename.rfind('.')  # probably never called
-    if dotpos > -1:
+        copypos = filename.rfind('copy')
+    if dotpos > -1 and copypos == -1:
         path = filename[:dotpos] + ' copy'
+    elif dotpos > -1 and copypos > -1:
+        path = filename[:copypos+4] 
     else:
-        path = filename + ' copy'
+        path = filename
     i = 0
-    while os.path.exists(path + str(i)):
-        i += 1
     if dotpos > -1:
+        while os.path.exists(path + str(i) + filename[dotpos:]):
+            i += 1
         path = path + str(i) + filename[dotpos:]
     else:
+        while os.path.exists(path + str(i)):
+            i += 1
         path = path + str(i)
     return path
 
@@ -88,14 +95,18 @@ def selectrand(critfunction, fld):
 def selectrandfolder(fld):
     """ Selects a random folder within *fld*, depth=2 for now, RELATIVE path
     """
-    return selectrand(os.path.isdir, fld)
+    f = selectrand(os.path.isdir, fld)
+    if f.find('.DS_Store') == -1:
+        return f
+    else:
+        return ''
 
 def selectrandfile(fld):
     """ Randomly selects a file inside fld
     """
     # TODO use excludes
     f = selectrand(os.path.isfile, fld)
-    if f.find('.DS_STORE') == -1: 
+    if f.find('.DS_Store') == -1: 
         return f 
     else: 
         return ''
@@ -149,6 +160,42 @@ def createImg(name, ext=".jpg", sizex=1024, sizey=768):
     img.save(full_path)
     return full_path
 
+def circleImg2(name, ext=".jpg", sizex=1024, sizey=768):
+    """ Absurd full pixels brute force to check whether a pixel belongs to a cirle,
+        cool result: the circle is not full"""
+    img = Image.new('RGB', (sizex, sizey), 'white')
+    pixels = img.load()
+    for i in range(img.size[0]):
+        for j in range(img.size[1]):
+            r, g, b = 50, 50, 50
+            x = i - (img.size[0]/2)
+            y = j - (img.size[1]/2)
+            if (x*x + y*y) in [30*30, 50*50, 200*200]:
+                pixels[i, j] = (130, 20, 50)
+            else:
+                pixels[i, j] = (r, g, b)
+    full_path = name+ext
+    img.save(full_path)
+    return full_path
+
+def circleImg(name, ext=".jpg", sizex=1024, sizey=768):
+    """ Creates a cirle """
+    img = Image.new('RGB', (sizex, sizey), 'white')
+    pixels = img.load()
+    inc = .5
+    color = (random.randint(0, 155)+100, random.randint(0, 155)+100, random.randint(0, 155)+100)
+    for i in range(math.floor(min(sizex, sizey)/10)):
+        rad = random.randint(1, math.floor(min(sizex, sizey)/2-1))
+        steps = 0
+        while steps < 360:
+            steps += inc
+            x = (img.size[0]/2) + rad*math.cos(steps)
+            y = (img.size[1]/2) + rad*math.sin(steps)
+            pixels[x, y] = color
+    full_path = name+ext
+    img.save(full_path)
+    return full_path
+
 def manyfilestest(nbfiles, fld):
     """ return the size of created files """
     total = 0
@@ -180,7 +227,6 @@ def manyimagestest(nbImages, fld):
         print("        " + humanize.naturalsize(size) + " " + full_path)
         total += size
     return total
-
 
 class Action:
     """ path
@@ -250,7 +296,7 @@ class Bot:
         """
         action = Action()
         task = random.choice(['CREATE', 'DELETE', 'COPY', 'MOVE', 'RENAME'])
-        if len(os.listdir(self.fld)) == 0:
+        if len(os.listdir(self.fld)) <= 5:
             task = 'CREATE'
         if task == 'CREATE':
             action.path = os.path.join(self.fld, randname(3))
@@ -304,7 +350,7 @@ class Bot:
         """
         action = Action()
         task = random.choice(['CREATE', 'DELETE', 'COPY', 'MOVE', 'MODIFY', 'RENAME', 'MOVEANDRENAME'])
-        if len(os.listdir(self.fld)) == 0:
+        if len(os.listdir(self.fld)) < 5:
             task = 'CREATE'
         if task == 'CREATE':
             action.path = createImg(os.path.join(self.fld, randname(3)), random.choice([".jpg", ".png", ".tiff", ".bmp"]))
@@ -328,6 +374,9 @@ class Bot:
             else:
                 path = selectrandfolder(self.fld)
                 if path != '':
+                    if os.path.isfile(path):
+                        os.unlink(path)
+                        time.sleep(.500)
                     shutil.move(action.path, path)
         elif task == 'RENAME':
             action.path = selectrandfile2(self.fld)
@@ -374,16 +423,34 @@ class Bot:
         for i in self.history:
             res += i
             for l in self.history[i]:
-                res += "\n " + str(l) + "\n"
+                res += "\n " + str(l)
+            res += "\n"
         return res
 # end of Bot
 
-def dostuff():
-    for i in range(0, 200):
-        lefld = randname(20)
-        path = "/Users/thomas/Pydio/tests/big"
-        createfolderifnotthere(os.path.join(path, lefld))
-        manyimagestest(1000, os.path.join(path, lefld))
+def dostuff(nbfiles):
+    lefld = randname(20)
+    path = "/Users/thomas/Pydio/tests/nobinnolucene1000"
+    createfolderifnotthere(os.path.join(path, lefld))
+    def manycirclestest(nbImages, fld):
+        """ return the size of created stuff """
+        fld = createfolderifnotthere(fld)
+        total = 0
+        while nbImages > 0:
+            nbImages -= 1
+            full_path = fld + "/" + randname(9)
+            full_path = circleImg(full_path, sizex=50, sizey=40)
+            print("[DEBUG] created image...")
+            size = os.path.getsize(full_path)
+            print("        " + humanize.naturalsize(size) + " " + full_path)
+            total += size
+        return total
+    files = 10
+    created_files, created_size = 0, 0
+    for i in range(math.ceil(nbfiles*.1)):
+        created_files += files
+        created_size += manycirclestest(files, os.path.join(path, lefld))
+    print("Created " + str(created_files) + " with a total size of " + str(humanize.naturalsize(created_size)))
 
 if __name__ == "__main__":
     FLD = "/Users/thomas/Pydio/tests/syncroVBox"

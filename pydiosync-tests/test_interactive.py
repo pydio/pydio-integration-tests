@@ -23,6 +23,7 @@ import platform
 import sys
 sys.path.append('..')
 from sdk.remote import PydioSdk
+from sdk.exceptions import PydioSdkBasicAuthException
 
 # Python 3
 if sys.version_info[0] < 3:
@@ -54,12 +55,14 @@ def docheck(sdk, path, subfolder=""):
         """
         missing = {}
         for k in remotefiles.keys():
+            print("Testing " + k)
             try:
                 if platform.system() == 'Windows':
                     localfiles.remove(os.path.normpath(k))
                 else:
                     localfiles.remove(unicodedata.normalize('NFD', k))
-            except KeyError:
+            except KeyError as e:
+                print(e)
                 missing[k] = time.time()
         return {"missing_local" : missing, "missing_remote": localfiles}
     #print(remote_ls)
@@ -91,6 +94,19 @@ def parseWithExcludes(diff, excludes):
         if not skip:
             ndiff["missing_remote"].add(p) 
     return ndiff
+
+def dofullcheck(conf):
+    sdk = PydioSdk(conf[args.job]['server'], conf[args.job]['workspace'], conf[args.job]['remote_folder'], '',
+        auth=(conf[args.job]['user'], PASSWORD),
+        skip_ssl_verify=True)  # FIXME: only for development
+    excludes = conf[args.job]['filters']['excludes']
+    diff = docheck(sdk, conf[args.job]['directory'], conf[args.job]['remote_folder'])
+    cleaned = parseWithExcludes(diff, excludes)
+    print(cleaned)
+    if len(cleaned["missing_local"]) == len(cleaned["missing_remote"]) == 0:
+        print("Synchronised ✔")
+    else:
+        print("Files to download " + str(len(cleaned["missing_local"])) + ". Files to upload " + str(len(cleaned["missing_remote"])))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -124,28 +140,26 @@ if __name__ == "__main__":
         #### MODES ####
         # Checks that a folder is properly synchronized
         if args.check:
-            excludes = conf[args.job]['filters']['excludes']
-            sdk = PydioSdk(conf[args.job]['server'], conf[args.job]['workspace'], conf[args.job]['remote_folder'], '',
-                auth=(conf[args.job]['user'], PASSWORD),
-                skip_ssl_verify=True)  # FIXME: only for development
-            diff = docheck(sdk, conf[args.job]['directory'], conf[args.job]['remote_folder'])
-            cleaned = parseWithExcludes(diff, excludes)
-            print(cleaned)
-            if len(cleaned["missing_local"]) == len(cleaned["missing_remote"]) == 0:
-                print("Synchronised ✔")
-
+            dofullcheck(conf)
         if args.synctest > 0:
             b = Bot(conf[args.job]["directory"])
             try:
                 waittime = int(args.synctest)
                 b.dosomethings(args.nbfiles, waittime)
+                print(b)
             except ValueError:  # if the arg wasn't an int
                 b.dosomethings(args.nbfiles, 1)
             while True:
                 try:
-                    leinput = input('[c]ontinue|[q]uit >')
-                    if leinput == '' or leinput[0] == 'c':
+                    leinput = input('[c]heck|[M]ore|[q]uit >')
+                    if leinput == '' or leinput[0].lower() == 'm':
                         print(b.dosomething())
+                    elif leinput[0].lower() == 'c':
+                        try:
+                            dofullcheck(conf)
+                        except PydioSdkBasicAuthException:
+                            print("Auth failed")
+                            PASSWORD = getpass.getpass('Password:')
                     elif leinput[0] == 'q':
                         break
                 except KeyboardInterrupt:
