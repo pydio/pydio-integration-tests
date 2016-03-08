@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 #  Copyright (©) 2016 Thomas Saliou - Abstrium SAS <team (at) pydio.com>
 #
 #  This program is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@ def toset(prefix, pathset):
     return rel_path
 
 def docheck(sdk, path, subfolder=""):
-    """ Using PydioSdk connects to a server and compares the list of files at 
+    """ Using PydioSdk connects to a server and compares the list of files at
         :param path: with the list of files at the :param sdk:
     """
     remote_ls = sdk.list(recursive='true')
@@ -50,19 +50,17 @@ def docheck(sdk, path, subfolder=""):
     local_ls = dirsnap(path)
     def dodiff(remotefiles, localfiles):
         """ from {'path/to/file': file, ...}, set('path/to/file', ...) do a
-            check that the same files are present returns dict of dict of files 
+            check that the same files are present returns dict of dict of files
             {missing_local, missing_remote}
         """
         missing = {}
         for k in remotefiles.keys():
-            print("Testing " + k)
             try:
-                if platform.system() == 'Windows':
-                    localfiles.remove(os.path.normpath(k))
-                else:
+                if platform.system() == 'Darwin':
                     localfiles.remove(unicodedata.normalize('NFD', k))
+                else:
+                    localfiles.remove(os.path.normpath(k))
             except KeyError as e:
-                print(e)
                 missing[k] = time.time()
         return {"missing_local" : missing, "missing_remote": localfiles}
     #print(remote_ls)
@@ -84,7 +82,7 @@ def parseWithExcludes(diff, excludes):
                 skip = True
                 break
         if not skip:
-            ndiff["missing_local"][p] = diff["missing_local"][p] 
+            ndiff["missing_local"][p] = diff["missing_local"][p]
     for p in diff["missing_remote"]:
         skip = False
         for patt in excludes:
@@ -92,7 +90,7 @@ def parseWithExcludes(diff, excludes):
                 skip = True
                 break
         if not skip:
-            ndiff["missing_remote"].add(p) 
+            ndiff["missing_remote"].add(p)
     return ndiff
 
 def dofullcheck(conf):
@@ -189,7 +187,7 @@ if __name__ == "__main__":
             # Create a new sync task
             # Wait for download to be done
             # Check Syncs contents'
-    else: 
+    else:
         print("Not enough information to proceed..." + "\n \033[92m Example usage: \
                 \n\tpython test_interactive.py --job name_of_job --synctest 2 --nbfiles 100 \
                 \n\tpython test_interactive.py --job name_of_job --check True\033[37m")

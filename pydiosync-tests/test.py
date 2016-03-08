@@ -184,14 +184,17 @@ def circleImg(name, ext=".jpg", sizex=1024, sizey=768):
     pixels = img.load()
     inc = .5
     color = (random.randint(0, 155)+100, random.randint(0, 155)+100, random.randint(0, 155)+100)
-    for i in range(math.floor(min(sizex, sizey)/10)):
+    for i in range(math.floor(min(sizex, sizey)/5)):
         rad = random.randint(1, math.floor(min(sizex, sizey)/2-1))
         steps = 0
+        cx = random.randint(1, sizex)
+        cy = random.randint(1, sizey)
         while steps < 360:
             steps += inc
-            x = (img.size[0]/2) + rad*math.cos(steps)
-            y = (img.size[1]/2) + rad*math.sin(steps)
-            pixels[x, y] = color
+            x = cx + rad*math.cos(steps)
+            y = cy + rad*math.sin(steps)
+            if x < sizex and y < sizey and x > 0 and y > 0:
+                pixels[x, y] = color
     full_path = name+ext
     img.save(full_path)
     return full_path
@@ -428,10 +431,11 @@ class Bot:
         return res
 # end of Bot
 
-def dostuff(nbfiles):
-    lefld = randname(20)
-    path = "/Users/thomas/Pydio/tests/nobinnolucene1000"
-    createfolderifnotthere(os.path.join(path, lefld))
+def dostuff(nbfiles, path=""):
+    if path == "":
+        path = "/Users/thomas/Pydio/tests/nobinnolucene1000"
+    else:
+        path = os.path.abspath(path)
     def manycirclestest(nbImages, fld):
         """ return the size of created stuff """
         fld = createfolderifnotthere(fld)
@@ -448,6 +452,8 @@ def dostuff(nbfiles):
     files = 10
     created_files, created_size = 0, 0
     for i in range(math.ceil(nbfiles*.1)):
+        lefld = randname(20)
+        createfolderifnotthere(os.path.join(path, lefld))
         created_files += files
         created_size += manycirclestest(files, os.path.join(path, lefld))
     print("Created " + str(created_files) + " with a total size of " + str(humanize.naturalsize(created_size)))
