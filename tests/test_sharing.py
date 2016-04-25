@@ -23,14 +23,18 @@ from selenium.common.exceptions import NoSuchElementException
 import time
 
 
-def element_present(webdriver, id='', css=''):
+def element_present(webdriver, id='', css='', test_attribute=''):
     try:
         if id:
-            webdriver.find_element_by_id(id)
+            element = webdriver.find_element_by_id(id)
         else:
-            webdriver.find_element_by_css_selector(css)
+            element = webdriver.find_element_by_css_selector(css)
     except NoSuchElementException:
         return False
+
+    if element and test_attribute:
+        if not element.get_attribute("src"):
+            return False
 
     return True
 
@@ -42,7 +46,7 @@ def detect_shared_link(webdriver, url, expect_working=True, preview=True, downlo
     assert "Pydio" in webdriver.title
 
     if expect_working:
-        preview_block_test = element_present(webdriver, id='mainImage')
+        preview_block_test = element_present(webdriver, id='mainImage', test_attribute='src')
         assert (preview and preview_block_test) or (not preview and not preview_block_test)
         download_block_test = element_present(webdriver, id='download_button')
         assert (download and download_block_test) or (not download and not download_block_test)
@@ -83,3 +87,5 @@ def test_shared_link(server_def, workspace, webdriver, preview, download):
     if preview and download:
         detect_shared_link(webdriver, link, expect_working=False)
     sdk.delete('/image.png')
+
+#def test_share_move(server_def, workspace, webdriver):
