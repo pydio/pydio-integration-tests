@@ -49,9 +49,14 @@ def detect_shared_link(webdriver, url, expect_working=True, preview=True, downlo
     if expect_working:
         test_att = 'src' if preview else ''
         preview_block_test = element_present(webdriver, id='mainImage', test_attribute=test_att)
-        assert (preview and preview_block_test) or (not preview and not preview_block_test)
-        download_block_test = element_present(webdriver, id='download_button')
-        assert (download and download_block_test) or (not download and not download_block_test)
+        result = (preview and preview_block_test) or (not preview and not preview_block_test)
+        assert result
+        if preview:
+            download_block_test = element_present(webdriver, id='download_button')
+        else:
+            download_block_test = element_present(webdriver, id='reactDLTemplate')
+        result = (download and download_block_test) or (not download and not download_block_test)
+        assert result
     else:
         error_block_test = element_present(webdriver, css='div.hash_load_error')
         assert error_block_test
