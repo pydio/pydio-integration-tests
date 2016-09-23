@@ -34,13 +34,13 @@ def element_present(webdriver, id='', css='', test_attribute=''):
         return False
 
     if element and test_attribute:
-        if not element.get_attribute("src"):
+        if not element.get_attribute(test_attribute):
             return False
 
     return True
 
 
-def detect_shared_link(webdriver, url, expect_working=True, preview=True, download=True):
+def detect_shared_link(webdriver, url, expect_working=True, preview=True, download=True, trigger_download=0):
     webdriver.get(url)
     time.sleep(5)
 
@@ -53,6 +53,10 @@ def detect_shared_link(webdriver, url, expect_working=True, preview=True, downlo
         assert result
         if preview:
             download_block_test = element_present(webdriver, id='download_button')
+            if trigger_download > 0:
+                for i in range(0, trigger_download):
+                    webdriver.find_element_by_id('download_button').click()
+                    i += 1
         else:
             download_block_test = element_present(webdriver, id='reactDLTemplate')
         result = (download and download_block_test) or (not download and not download_block_test)
@@ -60,6 +64,28 @@ def detect_shared_link(webdriver, url, expect_working=True, preview=True, downlo
     else:
         error_block_test = element_present(webdriver, css='div.hash_load_error')
         assert error_block_test
+
+
+def detect_password_share_and_submit(web_driver, url, password):
+    web_driver.get(url)
+    time.sleep(5)
+
+    assert "Pydio" in web_driver.title
+
+    try:
+        web_driver.find_element_by_css_selector('form.ajxp_password_auth')
+    except NoSuchElementException:
+        return False
+
+    try:
+        passField = web_driver.find_element_by_css_selector('form.ajxp_password_auth input[type="password"]')
+        submit = web_driver.find_element_by_css_selector('form.ajxp_password_auth input[type="submit"]')
+        passField.send_keys(password)
+        submit.click()
+        time.sleep(5)
+        return True
+    except NoSuchElementException:
+        return False
 
 
 def check_shared_element_data(sdk, filepath):
@@ -103,6 +129,43 @@ def test_shared_link(server_def, workspace, webdriver, preview, download):
     if preview and download:
         detect_shared_link(webdriver, link, expect_working=False)
     sdk.delete('/image.png')
+
+
+def test_password_link(server_def, workspace, webdriver):
+    sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']))
+
+    password = 'P@ssw0rd'
+    sdk.upload(local='resources/image.png', local_stat=local_stat('resources/image.png'), path=unicode('/image.png'))
+    link = sdk.share(ws_label='Shared File', ws_description='Description', password=password, expiration='', downloads='',
+                     can_read='true', can_download='true', paths=u'/image.png', link_handler='', can_write='false')
+
+    detect_shared_link(webdriver, link, expect_working=False, preview=True, download=True)
+    res = detect_password_share_and_submit(webdriver, link, password)
+    if res:
+        detect_shared_link(webdriver, link, expect_working=True, preview=True, download=True)
+
+    sdk.unshare(u'/image.png')
+    sdk.delete('/image.png')
+
+    if not res:
+        assert False
+
+
+def test_limited_downloads_link(server_def, workspace, webdriver):
+    sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']))
+
+    dl_limits = 3
+    sdk.upload(local='resources/image.png', local_stat=local_stat('resources/image.png'), path=unicode('/image.png'))
+    link = sdk.share(ws_label='Shared File', ws_description='Description', password='', expiration='', downloads=dl_limits,
+                     can_read='true', can_download='true', paths=u'/image.png', link_handler='', can_write='false')
+
+    detect_shared_link(webdriver, link, expect_working=True, preview=True, download=True, trigger_download=dl_limits)
+    # Downloads should now be expired
+    detect_shared_link(webdriver, link, expect_working=False, preview=True, download=True)
+
+    sdk.unshare(u'/image.png')
+    sdk.delete('/image.png')
+
 
 def test_share_move(server_def, workspace, webdriver):
     sdk = PydioSdk(server_def['host'], workspace['id'], unicode(''), '', (server_def['user'], server_def['pass']))
