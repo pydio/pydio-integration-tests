@@ -86,7 +86,7 @@ def webdriver(request):
         driver = webdriver.Firefox()
 
     def fin():
-        driver.close()
+        driver.quit()
 
     request.addfinalizer(fin)
     return driver
