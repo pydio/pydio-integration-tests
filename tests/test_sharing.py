@@ -41,6 +41,7 @@ def element_present(webdriver, id='', css='', test_attribute=''):
 
 
 def detect_shared_link(webdriver, url, expect_working=True, preview=True, download=True, trigger_download=0):
+    time.sleep(1)
     webdriver.get(url)
     time.sleep(5)
 
