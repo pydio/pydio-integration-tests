@@ -134,6 +134,8 @@ def test_shared_link(server_def, workspace, webdriver, preview, download):
     sdk.unshare(u'/image.png')
     if preview and download:
         detect_shared_link(webdriver, link, expect_working=False)
+
+    time.sleep(2)
     sdk.delete('/image.png')
 
 
