@@ -51,11 +51,13 @@ def detect_shared_link(webdriver, url, expect_working=True, preview=True, downlo
         preview_block_test = element_present(webdriver, id='mainImage', test_attribute=test_att)
         result = (preview and preview_block_test) or (not preview and not preview_block_test)
         assert result
+
         if preview:
             download_block_test = element_present(webdriver, id='download_button')
             if trigger_download > 0:
                 for i in range(0, trigger_download):
                     webdriver.find_element_by_id('download_button').click()
+                    time.sleep(2)
                     i += 1
         else:
             download_block_test = element_present(webdriver, id='reactDLTemplate')
@@ -79,11 +81,15 @@ def detect_password_share_and_submit(web_driver, url, password):
 
     try:
         passField = web_driver.find_element_by_css_selector('form.ajxp_password_auth input[type="password"]')
-        submit = web_driver.find_element_by_css_selector('form.ajxp_password_auth input[type="submit"]')
         passField.send_keys(password)
+        time.sleep(1)
+        submit = web_driver.find_element_by_css_selector(' form.ajxp_password_auth input[type="submit"]')
         submit.click()
         time.sleep(5)
+        # Now check shared link
+        assert element_present(web_driver, id='mainImage', test_attribute='src')
         return True
+
     except NoSuchElementException:
         return False
 
@@ -139,16 +145,10 @@ def test_password_link(server_def, workspace, webdriver):
     link = sdk.share(ws_label='Shared File', ws_description='Description', password=password, expiration='', downloads='',
                      can_read='true', can_download='true', paths=u'/image.png', link_handler='', can_write='false')
 
-    detect_shared_link(webdriver, link, expect_working=False, preview=True, download=True)
-    res = detect_password_share_and_submit(webdriver, link, password)
-    if res:
-        detect_shared_link(webdriver, link, expect_working=True, preview=True, download=True)
+    assert detect_password_share_and_submit(webdriver, link, password)
 
     sdk.unshare(u'/image.png')
     sdk.delete('/image.png')
-
-    if not res:
-        assert False
 
 
 def test_limited_downloads_link(server_def, workspace, webdriver):

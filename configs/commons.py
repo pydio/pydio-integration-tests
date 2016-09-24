@@ -77,7 +77,13 @@ def workspace(request, server_def, workspace_def):
 @pytest.fixture
 def webdriver(request):
     from selenium import webdriver
-    driver = webdriver.Firefox()
+    from sys import platform
+    if platform == 'darwin':
+        from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+        binary = FirefoxBinary('/Applications/FirefoxVersions/Firefox.app/Contents/MacOS/firefox-bin')
+        driver = webdriver.Firefox(firefox_binary=binary)
+    else:
+        driver = webdriver.Firefox()
 
     def fin():
         driver.close()
