@@ -1,0 +1,649 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Pydio API V2",
+		"_postman_id": "921d89b1-0627-d23b-f42b-d8c026346d86",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1-Users",
+			"description": "Request about users, check current user is admin and create user",
+			"item": [
+				{
+					"name": "User & Pass good",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nif(responseCode.code === 200) {\n    tests[\"Good user credentials\"] = responseCode.code === 200;\n} else {\n    tests[\"Wrong login or password\"] = responseCode.code !== 200;\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{login}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/0/state/user?format=json",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Check if the user/password is good to connect to Pydio"
+					},
+					"response": []
+				},
+				{
+					"name": "is_admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar isAdmin = jsonObject.tree.$.isAdmin;\nif(isAdmin == 1) {\n    tests[\"User is an admin, continue the test\"] = responseCode.code === 200;\n} else {\n    tests[\"User not an admin, can't continue the test\"] = responseCode.code !== 200;\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{login}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/admin/people/{{login}}",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Check if the user is an admin"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2-Workspace",
+			"description": "All workspaces requests, creating and renaming workspace",
+			"item": [
+				{
+					"name": "Create Workspace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusCreate = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusCreate === \"SUCCESS\") {\n    tests[\"Workspace '\" + environment.workspaceName + \"' created successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to create the workspace '\" + environment.workspaceName + \"'\"] = responseCode.code !== 200;\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{login}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/admin/workspaces?payload={{jsonDataCreateWorkspace}}",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Create a workspace, we gonna do all file test in this ws"
+					},
+					"response": []
+				},
+				{
+					"name": "Get id of the Workspace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonData = JSON.parse(responseBody);\nfunction switch_json_key_value(json) {\n    var temp = {};\n    for (var value in json) {\n        if(json.hasOwnProperty(value)){\n            temp[json[value]] = value ;\n        }\n    }\n    return temp;\n}\nvar json = switch_json_key_value(jsonData[\"LIST\"]);\npostman.setEnvironmentVariable(\"workspaceId\", json[environment.workspaceName]);\nif (environment.workspace_id === \"\") {\n    tests[\"Can't get id of the workspace '\" + environment.workspaceName + \"'\"] = responseCode.code !== 200;\n} else {\n    tests[\"Workspace id successfully getted\"] = responseCode.code === 200;\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{login}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/ajxp_conf/list_all_repositories_json",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Get the ID of the workspace to do file test"
+					},
+					"response": []
+				},
+				{
+					"name": "Rename Workspace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "var jsonObject = xml2Json(responseBody);\nvar statusRename = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusRename === \"SUCCESS\") {\n    tests[\"Workspace '\" + environment.workspace_name + \"' renamed to '\" + environment.renamed_workspace_name + \"' successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to renamed the workspace '\" + environment.workspace_name + \"' to '\" + environment.renamed_workspace_name + \"'\"] = responseCode.code !== 200;\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{login}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/admin/workspaces/{{workspaceId}}?payload={{jsonDataRenameWorkspace}}",
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Renaming the created workspace"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3-Metasource",
+			"description": "Add, edit and remove some metasource of the created workspace",
+			"item": [
+				{
+					"name": "Add Metasource",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusCreate = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusCreate === \"SUCCESS\") {\n    tests[\"Metasource '\" + environment.metaId + \"' added successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to added the metasource '\" + environment.metaId + \"'\"] = responseCode.code !== 200;\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{login}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/admin/workspaces/{{workspaceId}}/features/{{metaId}}?parameters={{jsonDataAddMetasource}}",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Add the 'meta.exif' metasource too check if we can add more feature to the created worsapce"
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Metasource",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusCreate = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusCreate === \"SUCCESS\") {\n    tests[\"Metasource '\" + environment.metaId + \"' edited successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to edited the metasource '\" + environment.metaId + \"'\"] = responseCode.code !== 200;\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{login}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/admin/workspaces/{{workspaceId}}/features/{{metaId}}?parameters={{jsonDataEditMetasource}}",
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Edit the created metasource"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Metasource",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusCreate = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusCreate === \"SUCCESS\") {\n    tests[\"Metasource '\" + environment.metaId + \"' removed successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to remove the metasource '\" + environment.metaId + \"'\"] = responseCode.code !== 200;\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{login}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/admin/workspaces/{{workspaceId}}/features/{{metaId}}",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Remove the created metasource"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4-Files",
+			"description": "",
+			"item": [
+				{
+					"name": "Create file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusCreateFile = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusCreateFile == \"SUCCESS\") {\n    tests[\"File '\" + environment.file + \"' created successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"File '\" + environment.file + \"' already exist\"] = responseCode.code !== 200;\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{login}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/fs/{{workspaceId}}/{{file}}",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Create an empty text file in the created workspace"
+					},
+					"response": []
+				},
+				{
+					"name": "Create folder",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusCreateFolder = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusCreateFolder == \"SUCCESS\") {\n    tests[\"Folder '\" + environment.folder + \"' created successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Folder '\" + environment.folder + \"' already exist\"] = responseCode.code !== 200;\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{login}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/fs/{{workspaceId}}/{{folder}}/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Create a folder in the created workspace"
+					},
+					"response": []
+				},
+				{
+					"name": "Copy file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar status_copy = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (status_copy == \"SUCCESS\") {\n    tests[\"File '\" + environment.file + \"' copied successfully in the folder '\" + environment.folder + \"'\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to copy '\" + environment.file + \"' in the folder '\" + environment.folder + \"'\"] = responseCode.code !== 200;\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{login}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/fs/{{workspaceId}}/{{folder}}/{{file}}?copy_source={{workspaceId}}/{{file}}",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Rename file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusRename = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusRename == \"SUCCESS\") {\n    tests['File \"' + environment.file + '\" renamed successfully to  \"' + environment.renamedFile + '\"'] = responseCode.code === 200;\n} else {\n    tests['Error while trying to rename \"' + environment.file + '\" to \"' + environment.renamedFile + '\"'] = responseCode.code !== 200;\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{login}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/fs/{{workspaceId}}/{{renamedFile}}?copy_source={{workspaceId}}/{{file}}&delete_source=true",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Rename the created file"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusDelete = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusDelete == \"SUCCESS\") {\n    tests[\"The file '\" + environment.file + \"' deleted successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to delete '\" + environment.file + \"'\"] = responseCode.code !== 200;\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{login}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/fs/{{workspaceId}}/{{folder}}/{{file}}",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Delete the copied file who's in the folder"
+					},
+					"response": []
+				},
+				{
+					"name": "Move file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusRename = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusRename == \"SUCCESS\") {\n    tests['File \"' + environment.renamedFile + '\" moved successfully in the folder  \"' + environment.folder + '\"'] = responseCode.code === 200;\n} else {\n    tests['Error while trying to move \"' + environment.renamedFile + '\" in the folder \"' + environment.folder + '\"'] = responseCode.code !== 200;\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{login}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/fs/{{workspaceId}}/{{folder}}/{{renamedFile}}?copy_source={{workspaceId}}/{{renamedFile}}&delete_source=true",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Move the renamed file in the folder"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove folder",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\n\nvar jsonObject = xml2Json(responseBody);\nvar statusDelete = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusDelete == \"SUCCESS\") {\n    tests[\"The file '\" + environment.file + \"' deleted successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to delete '\" + environment.file + \"'\"] = responseCode.code !== 200;\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{login}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/fs/{{workspaceId}}/{{folder}}/",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Remove the folder who have file in him"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6-Workspace",
+			"description": "Just remove the created workspace",
+			"item": [
+				{
+					"name": "Remove Workspace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusCreate = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusCreate === \"SUCCESS\") {\n    tests[\"Workspace '\" + environment.renamedWorkspaceName + \"' removed successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to remove the workspace '\" + environment.renamedWorkspaceName + \"'\"] = responseCode.code !== 200;\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{login}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/admin/workspaces/{{workspaceId}}",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Remove the created workspace to end the test"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
