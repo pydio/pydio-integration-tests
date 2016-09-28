@@ -1,4 +1,4 @@
-[submodule "sdk"]
-	path = sdk
+[submodule "python/sdk"]
+	path = python/sdk
 	url = https://github.com/pydio/pydio-sdk-python
 	branch = python2
