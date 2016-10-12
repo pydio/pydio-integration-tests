@@ -21,6 +21,7 @@ from configs.config_logger import setup_logging
 from configs.commons import *
 from sdk.ajxp_conf import *
 import pydioenv
+import time
 
 setup_logging(logging.INFO)
 
@@ -41,6 +42,7 @@ def test_zip(server_def, workspace):
     data = dict()
     data['archive_name'] = 'a.zip'
     sdk.perform_request(sdk.url + '/compress/a', data=data, type='post')
+    time.sleep(3)
     result = sdk.list('')
     assert '/a.zip' in result
 
