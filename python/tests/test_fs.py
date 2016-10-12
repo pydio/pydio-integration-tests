@@ -75,6 +75,9 @@ def test_upload(server_def, workspace):
     assert '/image.png' in result
     assert int(result['/image.png']) == stat['size']
 
+    remote_stat = sdk.stat('/image.png')
+    assert 'size' in remote_stat and remote_stat['size'] == stat['size']
+
     sdk.download(unicode('/image.png'), 'resources/downloaded_image.png')
     new_stat = local_stat('resources/downloaded_image.png')
     assert new_stat['size'] == stat['size']
