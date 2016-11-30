@@ -1,6 +1,6 @@
 six>=1.9.0
 pytest>=2.8.5
 keyring==4.0
-selenium>=2.49.0
+selenium==2.49.0
 pathlib==0.97
 PyDispatcher==2.0.3
