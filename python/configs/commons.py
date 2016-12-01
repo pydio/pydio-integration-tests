@@ -25,24 +25,28 @@ def inner_debug(message):
 
 
 def pytest_generate_tests(metafunc):
+    folder = 'configs'
+    if os.path.exists('conf'):
+        folder = 'conf'
+
     if 'server_config_file' in metafunc.fixturenames:
         i = 0
         files = []
-        while os.path.exists('configs/server.' + str(i) + '.json'):
-            files.append('configs/server.' + str(i) + '.json')
+        while os.path.exists(folder + '/server.' + str(i) + '.json'):
+            files.append(folder + '/server.' + str(i) + '.json')
             i += 1
         metafunc.parametrize("server_config_file", files)
 
     if 'workspace_config_file' in metafunc.fixturenames:
         i = 0
         files = []
-        while os.path.exists('configs/workspace.' + str(i) + '.json'):
-            with open('configs/workspace.' + str(i) + '.json') as handler:
+        while os.path.exists(folder + '/workspace.' + str(i) + '.json'):
+            with open(folder + '/workspace.' + str(i) + '.json') as handler:
                 j_dict = json.load(handler)
                 if metafunc.module.__name__ in j_dict['skip']:
                     i += 1
                     continue
-            files.append('configs/workspace.' + str(i) + '.json')
+            files.append(folder + '/workspace.' + str(i) + '.json')
             i += 1
         metafunc.parametrize("workspace_config_file", files)
 
