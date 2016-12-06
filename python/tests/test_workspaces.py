@@ -17,9 +17,6 @@
 #
 #  The latest code can be found at <http://pyd.io/>.
 #
-from sdk.remote import PydioSdk
-import logging
-import xml.etree.ElementTree as ET
 from configs.config_logger import setup_logging
 from configs.commons import *
 from sdk.ajxp_conf import *
@@ -38,11 +35,13 @@ def ls(server_def, repo_id, test_path='/recycle_bin'):
     else:
         raise Exception("Cannot find /recycle_bin in listing")
 
+
 def test_workspaces(server_def, workspace_def):
     repo = workspace_def['install_data']
+    sdk = SettingsSdk(server_def)
     try:
         logging.info("[TESTING WORKSPACE %s]" % repo['DISPLAY'])
-        new_id = create_repo(server_def, repo)
+        new_id = sdk.create_repo(repo)
         if repo["DRIVER_OPTIONS"]["RECYCLE_BIN"]:
             testRes = ls(server_def, new_id)
             assert testRes
@@ -52,4 +51,4 @@ def test_workspaces(server_def, workspace_def):
         logging.error(e)
         logging.error("[> ERROR]")
         assert False
-    delete_repo(server_def, new_id)
+    sdk.delete_repo(new_id)

@@ -67,13 +67,14 @@ def workspace_def(workspace_config_file):
 
 @pytest.fixture
 def workspace(request, server_def, workspace_def):
-    from sdk.ajxp_conf import create_repo, delete_repo
-    repo_id = create_repo(server_def, workspace_def['install_data'])
+    from sdk.ajxp_conf import SettingsSdk
+    sdk = SettingsSdk(server_def)
+    repo_id = sdk.create_repo(workspace_def['install_data'])
     workspace_def['id'] = repo_id
 
     def fin():
         print ("teardown repo")
-        delete_repo(server_def, repo_id)
+        sdk.delete_repo(repo_id)
     request.addfinalizer(fin)
     return workspace_def
 
