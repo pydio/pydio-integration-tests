@@ -2,3 +2,6 @@
 	path = python/sdk
 	url = https://github.com/pydio/pydio-sdk-python
 	branch = python2
+[submodule "pydio-sync/sdk"]
+	path = pydio-sync/sdk
+	url = https://github.com/pydio/pydio-sdk-python
