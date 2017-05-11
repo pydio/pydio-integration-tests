@@ -48,20 +48,20 @@ def detect_shared_link(webdriver, url, expect_working=True, preview=True, downlo
     assert "Pydio" in webdriver.title
 
     if expect_working:
-        test_att = 'src' if preview else ''
-        preview_block_test = element_present(webdriver, id='mainImage', test_attribute=test_att)
+        test_att = 'style' if preview else ''
+        preview_block_test = element_present(webdriver, css='.diaporama-image-main-block', test_attribute=test_att)
         result = (preview and preview_block_test) or (not preview and not preview_block_test)
         assert result
 
         if preview:
-            download_block_test = element_present(webdriver, id='download_button')
+            download_block_test = element_present(webdriver, css='.action-download')
             if trigger_download > 0:
                 for i in range(0, trigger_download):
-                    webdriver.find_element_by_id('download_button').click()
+                    webdriver.find_element_css_selector('.action-download').click()
                     time.sleep(2)
                     i += 1
         else:
-            download_block_test = element_present(webdriver, id='reactDLTemplate')
+            download_block_test = element_present(webdriver, css='.download-block')
         result = (download and download_block_test) or (not download and not download_block_test)
         assert result
     else:
@@ -76,19 +76,14 @@ def detect_password_share_and_submit(web_driver, url, password):
     assert "Pydio" in web_driver.title
 
     try:
-        web_driver.find_element_by_css_selector('form.ajxp_password_auth')
-    except NoSuchElementException:
-        return False
-
-    try:
-        passField = web_driver.find_element_by_css_selector('form.ajxp_password_auth input[type="password"]')
-        passField.send_keys(password)
+        pass_field = web_driver.find_element_by_id('application-password')
+        pass_field.send_keys(password)
         time.sleep(1)
-        submit = web_driver.find_element_by_css_selector(' form.ajxp_password_auth input[type="submit"]')
+        submit = web_driver.find_element_by_id('dialog-login-submit')
         submit.click()
         time.sleep(5)
         # Now check shared link
-        assert element_present(web_driver, id='mainImage', test_attribute='src')
+        assert element_present(web_driver, id='.diaporama-image-main-block', test_attribute='style')
         return True
 
     except NoSuchElementException:
