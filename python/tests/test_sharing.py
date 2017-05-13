@@ -57,7 +57,7 @@ def detect_shared_link(webdriver, url, expect_working=True, preview=True, downlo
             download_block_test = element_present(webdriver, css='.action-download')
             if trigger_download > 0:
                 for i in range(0, trigger_download):
-                    webdriver.find_element_css_selector('.action-download').click()
+                    webdriver.find_element_by_css_selector('.action-download').click()
                     time.sleep(2)
                     i += 1
         else:
@@ -83,7 +83,7 @@ def detect_password_share_and_submit(web_driver, url, password):
         submit.click()
         time.sleep(5)
         # Now check shared link
-        assert element_present(web_driver, id='.diaporama-image-main-block', test_attribute='style')
+        assert element_present(web_driver, css='.diaporama-image-main-block', test_attribute='style')
         return True
 
     except NoSuchElementException:

@@ -28,7 +28,7 @@ if len(sys.argv) > 2 :
 
 if cmd == 'test':
     import pytest
-    pytest.main(args=['-s'])
+    pytest.main(args=['-s', '--ignore=tests/test_meta.py'])
 elif cmd == 'install':
     import json
     from sdk.remote import PydioSdk
