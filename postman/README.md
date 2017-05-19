@@ -1,9 +1,9 @@
-#Pydio API Testing
+# Pydio API Testing
 
-##What is it ?
+## What is it ?
 Pydio API Testing provides two files to test your Pydio's API (currently V2) with [Postman](https://www.getpostman.com/) or [Newman](https://www.npmjs.com/package/newman)
 
-##Requirements
+## Requirements
 To run the test tool you first need to have of course a running instance Pydio version 7 at least (Here is an [install guide](https://pydio.com/en/docs/v6/install-pydio)).
 Edit the Pydio.postman_environment.json and replace:
 
@@ -12,9 +12,9 @@ Edit the Pydio.postman_environment.json and replace:
 3 - __ADMIN_PASSWORD__ with the admin user password
 
 
-##Run it
+## Run it
 
-#from command line with newman
+# From command line with newman
 
 First install it with npm like this
 ```
