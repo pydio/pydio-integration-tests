@@ -2,23 +2,36 @@
 	"variables": [],
 	"info": {
 		"name": "Pydio API V2",
-		"_postman_id": "921d89b1-0627-d23b-f42b-d8c026346d86",
+		"_postman_id": "b92a004e-3666-ddbd-d483-a9dfb4e4d18c",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "1-Users",
+			"name": "1 - Users",
 			"description": "Request about users, check current user is admin and create user",
 			"item": [
 				{
-					"name": "User & Pass good",
+					"name": "Create User",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nif(responseCode.code === 200) {\n    tests[\"Good user credentials\"] = responseCode.code === 200;\n} else {\n    tests[\"Wrong login or password\"] = responseCode.code !== 200;\n}"
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"created\"] = jsonData.reload.pendingSelection === postman.getEnvironmentVariable(\"cur_user\");"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"postman.setEnvironmentVariable(\"cur_user\", \"swago\");",
+									"postman.setEnvironmentVariable(\"cur_password\", \"security\");"
+								]
 							}
 						}
 					],
@@ -26,37 +39,100 @@
 						"auth": {
 							"type": "basic",
 							"basic": {
-								"username": "{{login}}",
-								"password": "{{password}}",
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
 								"saveHelperData": true,
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/0/state/user?format=json",
-						"method": "GET",
+						"url": "{{url}}/v2/admin/people/{{cur_user}}?format=json",
+						"method": "POST",
 						"header": [
 							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"description": ""
+							},
+							{
 								"key": "Authorization",
-								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"value": "Basic YWRtaW46UEBzc3cwcmQ=",
 								"description": ""
 							}
 						],
 						"body": {
 							"mode": "formdata",
-							"formdata": []
+							"formdata": [
+								{
+									"key": "resourceType",
+									"value": "user",
+									"type": "text",
+									"enabled": true
+								},
+								{
+									"key": "userPass",
+									"value": "{{cur_password}}",
+									"type": "text",
+									"enabled": true
+								}
+							]
 						},
-						"description": "Check if the user/password is good to connect to Pydio"
+						"description": ""
 					},
 					"response": []
 				},
 				{
-					"name": "is_admin",
+					"name": "Preferences List",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{cur_user}}",
+								"password": "{{cur_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/user/preferences?format=json",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic c3dhZ286c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Password",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar isAdmin = jsonObject.tree.$.isAdmin;\nif(isAdmin == 1) {\n    tests[\"User is an admin, continue the test\"] = responseCode.code === 200;\n} else {\n    tests[\"User not an admin, can't continue the test\"] = responseCode.code !== 200;\n}"
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"password changed\"] = responseCode.code === 200;",
+									"",
+									"if (responseCode.code === 200){",
+									"    postman.setEnvironmentVariable(\"cur_password\", postman.getEnvironmentVariable(\"new_password\"));",
+									"    postman.clearEnvironmentVariable(\"new_password\");",
+									"}",
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"postman.setEnvironmentVariable(\"new_password\", \"secureswag\");"
+								]
 							}
 						}
 					],
@@ -64,33 +140,64 @@
 						"auth": {
 							"type": "basic",
 							"basic": {
-								"username": "{{login}}",
-								"password": "{{password}}",
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
 								"saveHelperData": true,
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/v2/admin/people/{{login}}",
-						"method": "GET",
+						"url": "{{url}}/v2/admin/people/{{cur_user}}?format=json",
+						"method": "PATCH",
 						"header": [
 							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
 								"key": "Authorization",
-								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"value": "Basic YWRtaW46UEBzc3cwcmQ=",
 								"description": ""
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": []
+							"mode": "raw",
+							"raw": "{\"resourceType\":\"user\",\"parameterName\":\"userPass\",\"parameterValue\":\"{{new_password}}\"}"
 						},
-						"description": "Check if the user is an admin"
+						"description": "Update user password"
+					},
+					"response": []
+				},
+				{
+					"name": "User details",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{cur_user}}",
+								"password": "{{cur_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/user?format=json",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic c3dhZ286c2VjdXJlc3dhZw==",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
 					},
 					"response": []
 				}
 			]
 		},
 		{
-			"name": "2-Workspace",
+			"name": "2 - Workspaces & roles & Users",
 			"description": "All workspaces requests, creating and renaming workspace",
 			"item": [
 				{
@@ -100,7 +207,22 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusCreate = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusCreate === \"SUCCESS\") {\n    tests[\"Workspace '\" + environment.workspaceName + \"' created successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to create the workspace '\" + environment.workspaceName + \"'\"] = responseCode.code !== 200;\n}"
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"postman.setEnvironmentVariable(\"new_ws_slug\", \"my-swagger\");",
+									"postman.setEnvironmentVariable(\"new_ws_label\", \"My Swagger\");"
+								]
 							}
 						}
 					],
@@ -108,37 +230,62 @@
 						"auth": {
 							"type": "basic",
 							"basic": {
-								"username": "{{login}}",
-								"password": "{{password}}",
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
 								"saveHelperData": true,
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/v2/admin/workspaces?payload={{jsonDataCreateWorkspace}}",
+						"url": "{{url}}/v2/admin/workspaces?format=json",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"value": "Basic YWRtaW46UEBzc3cwcmQ=",
 								"description": ""
 							}
 						],
 						"body": {
 							"mode": "formdata",
-							"formdata": []
+							"formdata": [
+								{
+									"key": "payload",
+									"value": "{\n  \"securityScope\": \"USER\",\n  \"slug\": \"{{new_ws_slug}}\",\n  \"display\": \"{{new_ws_label}}\",\n  \"displayStringId\": 432,\n  \"accessType\": \"fs\",\n  \"writeable\": false,\n  \"isTemplate\": false,\n  \"parameters\": {\n    \"CREATION_TIME\": 1468593800,\n    \"USER_DESCRIPTION\": 476,\n    \"PATH\": \"AJXP_DATA_PATH/myswag\",\n    \"CREATE\": true,\n    \"RECYCLE_BIN\": \"recycle_bin\",\n    \"CHMOD_VALUE\": \"0600\",\n    \"DEFAULT_RIGHTS\": \"rw\",\n    \"PAGINATION_THRESHOLD\": 500,\n    \"PAGINATION_NUMBER\": 200\n  },\n  \"features\": {\n    \"metastore.serial\": {\n      \"METADATA_FILE\": \".ajxp_meta\",\n      \"METADATA_FILE_LOCATION\": \"infolders\"\n    },\n    \"meta.user\": {\n      \"meta_fields\": \"tags\",\n      \"meta_labels\": \"Tags\",\n      \"meta_visibility\": \"hidden\"\n    },\n    \"meta.filehasher\": [],\n    \"meta.watch\": [],\n    \"meta.syncable\": {\n      \"REPO_SYNCABLE\": true\n    },\n    \"meta.exif\": {\n      \"meta_fields\": \"COMPUTED_GPS.GPS_Latitude,COMPUTED_GPS.GPS_Longitude\",\n      \"meta_labels\": \"Latitude,Longitude\"\n    },\n    \"index.lucene\": {\n      \"index_meta_fields\": \"tags\",\n      \"repository_specific_keywords\": \"AJXP_USER\"\n    }\n  },\n  \"INFO\": {\n    \"users\": 12,\n    \"shares\": 74\n  }\n}",
+									"type": "text",
+									"enabled": true
+								}
+							]
 						},
 						"description": "Create a workspace, we gonna do all file test in this ws"
 					},
 					"response": []
 				},
 				{
-					"name": "Get id of the Workspace",
+					"name": "Find the new created workspace unique id",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonData = JSON.parse(responseBody);\nfunction switch_json_key_value(json) {\n    var temp = {};\n    for (var value in json) {\n        if(json.hasOwnProperty(value)){\n            temp[json[value]] = value ;\n        }\n    }\n    return temp;\n}\nvar json = switch_json_key_value(jsonData[\"LIST\"]);\npostman.setEnvironmentVariable(\"workspaceId\", json[environment.workspaceName]);\nif (environment.workspace_id === \"\") {\n    tests[\"Can't get id of the workspace '\" + environment.workspaceName + \"'\"] = responseCode.code !== 200;\n} else {\n    tests[\"Workspace id successfully getted\"] = responseCode.code === 200;\n}"
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"var keys = Object.keys(jsonData.data.children);",
+									"",
+									"for (var i = 0; i < keys.length; i++){",
+									"    ",
+									"    var key = keys[i];",
+									"    var ws = jsonData.data.children[key];",
+									"    console.log(ws.slug);",
+									"    if (ws.slug === postman.getEnvironmentVariable(\"new_ws_slug\")){",
+									"        ",
+									"        postman.setEnvironmentVariable(\"created_ws_id\", ws.repository_id)",
+									"        tests[\"workspace\"] = true;",
+									"        return;",
+									"    }",
+									"    ",
+									"}"
+								]
 							}
 						}
 					],
@@ -146,37 +293,37 @@
 						"auth": {
 							"type": "basic",
 							"basic": {
-								"username": "{{login}}",
-								"password": "{{password}}",
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
 								"saveHelperData": true,
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/ajxp_conf/list_all_repositories_json",
+						"url": "{{url}}/v2/admin/workspaces?format=json",
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"value": "Basic YWRtaW46UEBzc3cwcmQ=",
 								"description": ""
 							}
 						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"description": "Get the ID of the workspace to do file test"
+						"body": {},
+						"description": ""
 					},
 					"response": []
 				},
 				{
-					"name": "Rename Workspace",
+					"name": "Create role",
 					"event": [
 						{
-							"listen": "test",
+							"listen": "prerequest",
 							"script": {
 								"type": "text/javascript",
-								"exec": "var jsonObject = xml2Json(responseBody);\nvar statusRename = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusRename === \"SUCCESS\") {\n    tests[\"Workspace '\" + environment.workspace_name + \"' renamed to '\" + environment.renamed_workspace_name + \"' successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to renamed the workspace '\" + environment.workspace_name + \"' to '\" + environment.renamed_workspace_name + \"'\"] = responseCode.code !== 200;\n}"
+								"exec": [
+									"",
+									"postman.setEnvironmentVariable(\"new_role_id\", \"swaggerRole\")"
+								]
 							}
 						}
 					],
@@ -184,119 +331,118 @@
 						"auth": {
 							"type": "basic",
 							"basic": {
-								"username": "{{login}}",
-								"password": "{{password}}",
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
 								"saveHelperData": true,
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/v2/admin/workspaces/{{workspaceId}}?payload={{jsonDataRenameWorkspace}}",
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"description": "Renaming the created workspace"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "3-Metasource",
-			"description": "Add, edit and remove some metasource of the created workspace",
-			"item": [
-				{
-					"name": "Add Metasource",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusCreate = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusCreate === \"SUCCESS\") {\n    tests[\"Metasource '\" + environment.metaId + \"' added successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to added the metasource '\" + environment.metaId + \"'\"] = responseCode.code !== 200;\n}"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": {
-								"username": "{{login}}",
-								"password": "{{password}}",
-								"saveHelperData": true,
-								"showPassword": false
-							}
-						},
-						"url": "{{url}}/v2/admin/workspaces/{{workspaceId}}/features/{{metaId}}?parameters={{jsonDataAddMetasource}}",
+						"url": "{{url}}/v2/admin/roles/{{new_role_id}}?format=json",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"value": "Basic YWRtaW46UEBzc3cwcmQ=",
 								"description": ""
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": []
+							"mode": "raw",
+							"raw": "{\n  \"icon\": \"user-acl.png\",\n  \"rights_summary\": \"Pour more swag-read and swag-write on repo swagger\",\n  \"is_default\": \"\",\n  \"ajxp_mime\": \"role\",\n  \"role_id\": \"{{new_role_id}}\",\n  \"role\": {\n    \"ACL\": {\n      \"{{created_ws_id}}\": \"rw\"\n    },\n    \"MASKS\": [],\n    \"ACTIONS\": [],\n    \"PARAMETERS\": {},\n    \"APPLIES\": []\n  },\n  \"path\": \"AJXP_SWAG_/USER\",\n  \"label\": \"AJXP_SWAG_/USER\"\n}"
 						},
-						"description": "Add the 'meta.exif' metasource too check if we can add more feature to the created worsapce"
+						"description": ""
 					},
 					"response": []
 				},
 				{
-					"name": "Edit Metasource",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusCreate = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusCreate === \"SUCCESS\") {\n    tests[\"Metasource '\" + environment.metaId + \"' edited successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to edited the metasource '\" + environment.metaId + \"'\"] = responseCode.code !== 200;\n}"
-							}
-						}
-					],
+					"name": "Edit Newly Created Role",
 					"request": {
 						"auth": {
 							"type": "basic",
 							"basic": {
-								"username": "{{login}}",
-								"password": "{{password}}",
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
 								"saveHelperData": true,
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/v2/admin/workspaces/{{workspaceId}}/features/{{metaId}}?parameters={{jsonDataEditMetasource}}",
+						"url": "{{url}}/v2/admin/roles/{{new_role_id}}?format=json",
 						"method": "PATCH",
 						"header": [
 							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
 								"key": "Authorization",
-								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"value": "Basic YWRtaW46UEBzc3cwcmQ=",
 								"description": ""
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": []
+							"mode": "raw",
+							"raw": "{\n    \"ACL\": {\n      \"{{created_ws_id}}\": \"rw\"\n    },\n    \"MASKS\": [],\n    \"ACTIONS\": [],\n    \"PARAMETERS\": {},\n    \"APPLIES\": []\n}"
 						},
-						"description": "Edit the created metasource"
+						"description": ""
 					},
 					"response": []
 				},
 				{
-					"name": "Remove Metasource",
+					"name": "Assign Created Role",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/admin/people/{{cur_user}}?format=json",
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46UEBzc3cwcmQ=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"resourceType\":\"user\",\"parameterName\":\"userAddRole\",\"parameterValue\":\"{{new_role_id}}\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Check has the newly created ws",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusCreate = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusCreate === \"SUCCESS\") {\n    tests[\"Metasource '\" + environment.metaId + \"' removed successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to remove the metasource '\" + environment.metaId + \"'\"] = responseCode.code !== 200;\n}"
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"if(tests[\"repo list\"]) {",
+									"    var ws;",
+									"    for(var i = 0; i < jsonData.repositories.repo.length; i++) {",
+									"        var repo = jsonData.repositories.repo[i];",
+									"        if((tests[\"role assignment\"] = (repo[\"@slug\"] === \"my-swagger\")) === true){",
+									"            return;",
+									"        }",
+									"    }",
+									"}",
+									""
+								]
 							}
 						}
 					],
@@ -304,43 +450,63 @@
 						"auth": {
 							"type": "basic",
 							"basic": {
-								"username": "{{login}}",
-								"password": "{{password}}",
+								"username": "{{cur_user}}",
+								"password": "{{cur_password}}",
 								"saveHelperData": true,
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/v2/admin/workspaces/{{workspaceId}}/features/{{metaId}}",
-						"method": "DELETE",
+						"url": "{{url}}/v2/user?format=json",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"value": "Basic c3dhZ286c2VjdXJlc3dhZw==",
 								"description": ""
 							}
 						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"description": "Remove the created metasource"
+						"body": {},
+						"description": ""
 					},
 					"response": []
 				}
 			]
 		},
 		{
-			"name": "4-Files",
+			"name": "3 - Files",
 			"description": "",
 			"item": [
 				{
-					"name": "Create file",
+					"name": "/fs/file",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusCreateFile = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusCreateFile == \"SUCCESS\") {\n    tests[\"File '\" + environment.file + \"' created successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"File '\" + environment.file + \"' already exist\"] = responseCode.code !== 200;\n}"
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"var created = jsonData.nodesDiff.add[0];",
+									"",
+									"if(created){",
+									"    tests[\"created\"] = created.path.endsWith(postman.getEnvironmentVariable(\"file\"));",
+									"}",
+									"",
+									"tests[\"created\"] = created",
+									"postman.clearEnvironmentVariable(\"file\");"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var name = Math.random().toString(36).substring(5);",
+									"postman.setEnvironmentVariable(\"file\", name);",
+									"var ws = postman.getEnvironmentVariable(\"created_ws_id\");",
+									"postman.setEnvironmentVariable(\"workspace\", ws);",
+									""
+								]
 							}
 						}
 					],
@@ -348,37 +514,52 @@
 						"auth": {
 							"type": "basic",
 							"basic": {
-								"username": "{{login}}",
-								"password": "{{password}}",
+								"username": "{{cur_user}}",
+								"password": "{{cur_password}}",
 								"saveHelperData": true,
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/v2/fs/{{workspaceId}}/{{file}}",
+						"url": "{{url}}/v2/fs/{{created_ws_id}}/{{file}}?format=json",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"value": "Basic c3dhZ286c2VjdXJlc3dhZw==",
 								"description": ""
 							}
 						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
+						"body": {},
 						"description": "Create an empty text file in the created workspace"
 					},
 					"response": []
 				},
 				{
-					"name": "Create folder",
+					"name": "/fs/folder/",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusCreateFolder = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusCreateFolder == \"SUCCESS\") {\n    tests[\"Folder '\" + environment.folder + \"' created successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Folder '\" + environment.folder + \"' already exist\"] = responseCode.code !== 200;\n}"
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"var created = jsonData.nodesDiff.add[0];",
+									"if(created){",
+									"    tests[\"created\"] = created.path.endsWith(postman.getEnvironmentVariable(\"folder\"));",
+									"}",
+									"tests[\"created\"] = created"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var name = Math.random().toString(36).substring(5);",
+									"var filelist = postman.setEnvironmentVariable(\"folder\", name);",
+									""
+								]
 							}
 						}
 					],
@@ -386,37 +567,54 @@
 						"auth": {
 							"type": "basic",
 							"basic": {
-								"username": "{{login}}",
-								"password": "{{password}}",
+								"username": "{{cur_user}}",
+								"password": "{{cur_password}}",
 								"saveHelperData": true,
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/v2/fs/{{workspaceId}}/{{folder}}/",
+						"url": "{{url}}/v2/fs/{{created_ws_id}}/{{folder}}/?format=json",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"value": "Basic c3dhZ286c2VjdXJlc3dhZw==",
 								"description": ""
 							}
 						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
+						"body": {},
 						"description": "Create a folder in the created workspace"
 					},
 					"response": []
 				},
 				{
-					"name": "Copy file",
+					"name": "Select working folder",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar status_copy = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (status_copy == \"SUCCESS\") {\n    tests[\"File '\" + environment.file + \"' copied successfully in the folder '\" + environment.folder + \"'\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to copy '\" + environment.file + \"' in the folder '\" + environment.folder + \"'\"] = responseCode.code !== 200;\n}"
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"var count = jsonData.pagination? jsonData.pagination.count : jsonData.children.length;",
+									"var folder = postman.getEnvironmentVariable(\"folder\");",
+									"",
+									"var children = jsonData.children ? jsonData.children : jsonData.data.children",
+									"var keys = Object.keys(children);",
+									"",
+									"if (keys.length > 1) {",
+									"    do{",
+									"        var index = Math.floor(Math.random() * (keys.length) + 0);",
+									"        var key = keys[index];",
+									"        var child = jsonData.data.children[key];",
+									"        ",
+									"        if (child.mimestring === \"Directory\" && key !== \"/recycle_bin\"){",
+									"            postman.setEnvironmentVariable(\"folder\", child.label);",
+									"        }",
+									"    } while(!postman.getEnvironmentVariable(\"folder\"))",
+									"}"
+								]
 							}
 						}
 					],
@@ -424,24 +622,290 @@
 						"auth": {
 							"type": "basic",
 							"basic": {
-								"username": "{{login}}",
-								"password": "{{password}}",
+								"username": "{{cur_user}}",
+								"password": "{{cur_password}}",
 								"saveHelperData": true,
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/v2/fs/{{workspaceId}}/{{folder}}/{{file}}?copy_source={{workspaceId}}/{{file}}",
+						"url": "{{url}}/v2/fs/{{created_ws_id}}/?format=json&children=a",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic c3dhZ286c2VjdXJlc3dhZw==",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Upload",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var resp = xml2Json(responseBody);",
+									"",
+									"var added = resp.tree.nodes_diff.add;",
+									"var updated = resp.tree.nodes_diff.update;",
+									"",
+									"tests.uploaded = added || updated;",
+									"",
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var name = Math.random().toString(36).substring(5);",
+									"var filelist = postman.setEnvironmentVariable(\"file\", name + \"lili.txt\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{cur_user}}",
+								"password": "{{cur_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/io/{{created_ws_id}}/{{folder}}/{{file}}?format=json",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Length",
+								"value": "502",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic c3dhZ286c2VjdXJlc3dhZw==",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "bzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedd\n\n\nbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedbzjkhfojzafjzefefjdfjdzjigfijehzgfjizgedd\n"
+						},
+						"description": "upload a file"
+					},
+					"response": [
+						{
+							"id": "7d10cc1c-4358-44bf-874e-4ba0f6ebc3ee",
+							"name": "uploaed_resp",
+							"originalRequest": {
+								"url": "{{url}}/v2/io/my-files/m.jpg",
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Length",
+										"value": "25208",
+										"enabled": true,
+										"description": "The length of the response body in octets (8-bit bytes)",
+										"disabled": false
+									},
+									{
+										"key": "Authorization",
+										"name": "Authorization",
+										"value": "Basic YWRtaW46c2VjdXJpdHk="
+									}
+								],
+								"body": {
+									"mode": "file",
+									"file": {}
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "xml",
+							"_postman_previewtype": "text",
+							"header": [
+								{
+									"key": "Connection",
+									"value": "close",
+									"name": "Connection",
+									"description": "Options that are desired for the connection"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip",
+									"name": "Content-Encoding",
+									"description": "The type of encoding used on the data."
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/xml; charset=UTF-8",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 09 May 2017 15:37:18 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.10 (Debian)",
+									"name": "Server",
+									"description": "A name for the server"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked",
+									"name": "Transfer-Encoding",
+									"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding",
+									"name": "Vary",
+									"description": "Tells downstream proxies how to match future request headers to decide whether the cached response can be used rather than requesting a fresh one from the origin server."
+								}
+							],
+							"cookie": [],
+							"responseTime": 106,
+							"body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><tree ><nodes_diff><update><tree is_file=\"true\" filename=\"/m.jpg\" mimestring_id=\"13\" icon=\"image.png\" fonticon=\"file-image\" file_group=\"1\" file_owner=\"1\" ajxp_readonly=\"false\" file_perms=\"0600\" ajxp_modiftime=\"1494344238\" bytesize=\"25208\" is_image=\"1\" image_type=\"image/jpeg\" image_width=\"480\" image_height=\"358\" readable_dimension=\"480px X 358px\" ajxp_relativetime=\"Modified today at 15:37\" ajxp_description=\"Modified today at 15:37\" filesize=\"24.62 KB\" md5=\"5fb4bae6ae2152273d56e44daa09831b\" mimestring=\"JPG picture\" node_repository_id=\"1\" original_path=\"/m.jpg\" text=\"m.jpg\" ajxp_im_time=\"1494344238\"/></update></nodes_diff></tree>"
+						}
+					]
+				},
+				{
+					"name": "fs/fodler",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"var count = jsonData.pagination? jsonData.pagination.count : jsonData.children.length;",
+									"",
+									"var children = jsonData.children ? jsonData.children : jsonData.data.children",
+									"var keys = Object.keys(children);",
+									"",
+									"if (keys.length > 1) {",
+									"    do{",
+									"        postman.clearEnvironmentVariable(\"file\");",
+									"        var index = Math.floor(Math.random() * (keys.length) + 1);",
+									"        var key = keys[index];",
+									"        var child = jsonData.data.children[key];",
+									"        ",
+									"        if (child.mimestring !== \"Directory\" && key !== \"/recycle_bin\"){",
+									"            postman.setEnvironmentVariable(\"file\", child.label);",
+									"        }",
+									"    } while(!postman.getEnvironmentVariable(\"file\"))",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{cur_user}}",
+								"password": "{{cur_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/fs/{{created_ws_id}}/{{folder}}/?format=json&children=a",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic c3dhZ286c2VjdXJlc3dhZw==",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Download",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{cur_user}}",
+								"password": "{{cur_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/io/{{created_ws_id}}/{{folder}}",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic c3dhZ286c2VjdXJlc3dhZw==",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": "get file content"
+					},
+					"response": []
+				},
+				{
+					"name": "Copy file",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{cur_user}}",
+								"password": "{{cur_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/fs/{{created_ws_id}}/{{folder}}/{{file}}copy?format=json",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"value": "Basic c3dhZ286c2VjdXJlc3dhZw==",
 								"description": ""
 							}
 						],
 						"body": {
 							"mode": "formdata",
-							"formdata": []
+							"formdata": [
+								{
+									"key": "copy_source",
+									"value": "{{workspace}}/{{folder}}/{{file}}",
+									"type": "text",
+									"enabled": true
+								}
+							]
 						},
 						"description": ""
 					},
@@ -449,115 +913,53 @@
 				},
 				{
 					"name": "Rename file",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusRename = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusRename == \"SUCCESS\") {\n    tests['File \"' + environment.file + '\" renamed successfully to  \"' + environment.renamedFile + '\"'] = responseCode.code === 200;\n} else {\n    tests['Error while trying to rename \"' + environment.file + '\" to \"' + environment.renamedFile + '\"'] = responseCode.code !== 200;\n}"
-							}
-						}
-					],
 					"request": {
 						"auth": {
 							"type": "basic",
 							"basic": {
-								"username": "{{login}}",
-								"password": "{{password}}",
+								"username": "{{cur_user}}",
+								"password": "{{cur_password}}",
 								"saveHelperData": true,
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/v2/fs/{{workspaceId}}/{{renamedFile}}?copy_source={{workspaceId}}/{{file}}&delete_source=true",
+						"url": "{{url}}/v2/fs/{{created_ws_id}}/{{folder}}/{{file}}2?copy_source={{created_ws_id}}/{{folder}}/{{file}}copy&delete_source=true",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"value": "Basic c3dhZ286c2VjdXJlc3dhZw==",
 								"description": ""
 							}
 						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
+						"body": {},
 						"description": "Rename the created file"
 					},
 					"response": []
 				},
 				{
 					"name": "Delete file",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusDelete = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusDelete == \"SUCCESS\") {\n    tests[\"The file '\" + environment.file + \"' deleted successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to delete '\" + environment.file + \"'\"] = responseCode.code !== 200;\n}"
-							}
-						}
-					],
 					"request": {
 						"auth": {
 							"type": "basic",
 							"basic": {
-								"username": "{{login}}",
-								"password": "{{password}}",
+								"username": "{{cur_user}}",
+								"password": "{{cur_password}}",
 								"saveHelperData": true,
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/v2/fs/{{workspaceId}}/{{folder}}/{{file}}",
+						"url": "{{url}}/v2/fs/{{created_ws_id}}/{{folder}}/{{file}}2?format=json",
 						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"value": "Basic c3dhZ286c2VjdXJlc3dhZw==",
 								"description": ""
 							}
 						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
+						"body": {},
 						"description": "Delete the copied file who's in the folder"
-					},
-					"response": []
-				},
-				{
-					"name": "Move file",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusRename = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusRename == \"SUCCESS\") {\n    tests['File \"' + environment.renamedFile + '\" moved successfully in the folder  \"' + environment.folder + '\"'] = responseCode.code === 200;\n} else {\n    tests['Error while trying to move \"' + environment.renamedFile + '\" in the folder \"' + environment.folder + '\"'] = responseCode.code !== 200;\n}"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": {
-								"username": "{{login}}",
-								"password": "{{password}}",
-								"saveHelperData": true,
-								"showPassword": false
-							}
-						},
-						"url": "{{url}}/v2/fs/{{workspaceId}}/{{folder}}/{{renamedFile}}?copy_source={{workspaceId}}/{{renamedFile}}&delete_source=true",
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"description": "Move the renamed file in the folder"
 					},
 					"response": []
 				},
@@ -568,7 +970,9 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\n\nvar jsonObject = xml2Json(responseBody);\nvar statusDelete = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusDelete == \"SUCCESS\") {\n    tests[\"The file '\" + environment.file + \"' deleted successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to delete '\" + environment.file + \"'\"] = responseCode.code !== 200;\n}"
+								"exec": [
+									"tests[\"Request successfully precessed\"] = responseCode.code === 200;"
+								]
 							}
 						}
 					],
@@ -576,25 +980,22 @@
 						"auth": {
 							"type": "basic",
 							"basic": {
-								"username": "{{login}}",
-								"password": "{{password}}",
+								"username": "{{cur_user}}",
+								"password": "{{cur_password}}",
 								"saveHelperData": true,
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/v2/fs/{{workspaceId}}/{{folder}}/",
+						"url": "{{url}}/v2/fs/{{created_ws_id}}/{{folder}}/?format=json",
 						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"value": "Basic c3dhZ286c2VjdXJlc3dhZw==",
 								"description": ""
 							}
 						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
+						"body": {},
 						"description": "Remove the folder who have file in him"
 					},
 					"response": []
@@ -602,44 +1003,118 @@
 			]
 		},
 		{
-			"name": "6-Workspace",
-			"description": "Just remove the created workspace",
+			"name": "4 - Clean",
+			"description": "",
 			"item": [
 				{
-					"name": "Remove Workspace",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "tests[\"Request successfully precessed\"] = responseCode.code === 200;\nvar jsonObject = xml2Json(responseBody);\nvar statusCreate = jsonObject[\"tree\"][\"message\"][\"$\"][\"type\"];\nif (statusCreate === \"SUCCESS\") {\n    tests[\"Workspace '\" + environment.renamedWorkspaceName + \"' removed successfully\"] = responseCode.code === 200;\n} else {\n    tests[\"Error while trying to remove the workspace '\" + environment.renamedWorkspaceName + \"'\"] = responseCode.code !== 200;\n}"
-							}
-						}
-					],
+					"name": "Remove User Role",
 					"request": {
 						"auth": {
 							"type": "basic",
 							"basic": {
-								"username": "{{login}}",
-								"password": "{{password}}",
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
 								"saveHelperData": true,
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/v2/admin/workspaces/{{workspaceId}}",
+						"url": "{{url}}/v2/admin/people/{{new_role_id}}?format=json",
 						"method": "DELETE",
 						"header": [
 							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
 								"key": "Authorization",
-								"value": "Basic xxxxxxxxxxxxxxxxxxxxxx",
+								"value": "Basic YWRtaW46UEBzc3cwcmQ=",
 								"description": ""
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": []
+							"mode": "raw",
+							"raw": ""
 						},
-						"description": "Remove the created workspace to end the test"
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Created Role",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/admin/roles/{{new_role_id}}",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46UEBzc3cwcmQ=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Created workspace",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/admin/workspaces/{{created_ws_id}}",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46UEBzc3cwcmQ=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Created User",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/v2/admin/people/{{cur_user}}",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46UEBzc3cwcmQ=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
 					},
 					"response": []
 				}
