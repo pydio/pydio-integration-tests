@@ -1,0 +1,2160 @@
+{
+	"variables": [],
+	"info": {
+		"name": "4 - API V2 - Workspace templates",
+		"_postman_id": "30c9cae9-8114-1f00-ff60-2b0c96abeadb",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1 - Create user & workspace",
+			"description": "",
+			"item": [
+				{
+					"name": "Create user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"if (responseBody.startsWith(\"{\")) {",
+									"    var data = JSON.parse(responseBody);",
+									"    tests[\"user created\"] = ",
+									"    (data.message.level === \"Info\" && data.reload.pendingSelection === postman.getEnvironmentVariable(\"user\"));",
+									"} else {",
+									"    var data = xml2Json(responseBody);",
+									"    ",
+									"    if(data.tree.message[\"_\"].startsWith(\"User already exists\")){",
+									"        tests[\"already exists\"] = true;",
+									"    } else {",
+									"        tests[\"creation failed\"] = false;",
+									"    }",
+									"}",
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"postman.setEnvironmentVariable(\"user\", \"xxxpydio_test_newman\");",
+									"postman.setEnvironmentVariable(\"password\", \"newman\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/admin/people/{{user}}?format=json",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "resourceType",
+									"type": "text",
+									"value": "user"
+								},
+								{
+									"key": "userPass",
+									"type": "text",
+									"value": "{{password}}"
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Create workspace template",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"if (responseCode.code === 200) {",
+									"    if (responseBody.startsWith(\"{\")){",
+									"        var rjson = JSON.parse(responseBody);",
+									"        if(rjson.message && rjson.message.message){",
+									"            tests[\"Workspace template created\"] = true;",
+									"            if (rjson.reload && rjson.reload.pendingSelection){",
+									"                postman.setEnvironmentVariable(\"ws_template_id\", rjson.reload.pendingSelection)",
+									"            }",
+									"        }",
+									"    }",
+									"} else {",
+									"    tests[\"Failed to create template\"] = false;",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/admin/workspaces?format=json",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "payload",
+									"value": "{\n  \"accessType\": \"fs\",\n  \"isTemplate\": true,\n  \"parameters\": {\n    \"USER_DESCRIPTION\": \"test\",\n    \"TPL_DEFAULT_LABEL\": \"xxx_test\",\n    \"CREATE\": true,\n    \"CHMOD_VALUE\": \"0666\",\n    \"RECYCLE_BIN\": \"recycle_bin\",\n    \"PAGINATION_THRESHOLD\": 500,\n    \"PAGINATION_NUMBER\": 200,\n    \"REMOTE_SORTING\": true,\n    \"REMOTE_SORTING_DEFAULT_COLUMN\": \"ajxp_label\",\n    \"REMOTE_SORTING_DEFAULT_DIRECTION\": \"asc\"\n  },\n\"display\": \"HelloTPL\"\n}",
+									"type": "text"
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Create read-only workspace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"if (responseBody.startsWith(\"{\")){",
+									"    var rjson = JSON.parse(responseBody);",
+									"    tests[\"created\"] =  rjson.message.message.startsWith(\"Successfully created workspace! You can now add some 'Metadata Sources'\");",
+									"} else {",
+									"    tests[\"created\"] = false;",
+									"}",
+									"",
+									"",
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"postman.setEnvironmentVariable(\"rslug\", \"xxx-pydio-test-ws-one\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/ajxp_conf/create_repository?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"ajxp_conf",
+								"create_repository"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "json_data",
+									"value": "{\n  \"DRIVER\": \"ajxp_template_adef0a20f451686a7b0815b1e3773ead\",\n  \"IS_TEMPLATE\": false,\n  \"DRIVEROPTIONS\": [\n    {\"USER_DESCRIPTION\": \"test\"},\n    {\"TPL_DEFAULT_LABEL\": \"xxx_test\"},\n    {\"CREATE\": true},\n    {\"CHMOD_VALUE\": \"0666\"},\n    {\"RECYCLE_BIN\": \"recycle_bin\"},\n    {\"PAGINATION_THRESHOLD\": 500},\n    {\"PAGINATION_NUMBER\": 200},\n    {\"REMOTE_SORTING\": true},\n    {\"REMOTE_SORTING_DEFAULT_COLUMN\": \"ajxp_label\"},\n    {\"REMOTE_SORTING_DEFAULT_DIRECTION\": \"asc\"}\n  ],\n\"DISPLAY\": \"HelloTPLbla\"\n}",
+									"type": "text"
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Create read-write workspace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"if (responseBody.startsWith(\"{\")){",
+									"    var rjson = JSON.parse(responseBody);",
+									"    tests[\"created\"] =  rjson.message.message.startsWith(\"Successfully created workspace! You can now add some 'Metadata Sources'\");",
+									"} else {",
+									"    tests[\"created\"] = false;",
+									"}",
+									"",
+									"",
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"postman.setEnvironmentVariable(\"rwslug\", \"xxx-pydio-test-ws-two\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/admin/workspaces?format=json",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "payload",
+									"value": "{\n  \"display\": \"{{rwslug}}\",\n  \"accessType\": \"ajxp_template_{{ws_template_id}}\",\n  \"isTemplate\": false,\n  \"parameters\": {\n    \"PATH\": \"AJXP_DATA_PATH/{{rwslug}}\"\n  }\n}",
+									"type": "text"
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Create write-only workspace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"if (responseBody.startsWith(\"{\")){",
+									"    var rjson = JSON.parse(responseBody);",
+									"    tests[\"created\"] =  rjson.message.message.startsWith(\"Successfully created workspace! You can now add some 'Metadata Sources'\");",
+									"} else {",
+									"    tests[\"created\"] = false;",
+									"}",
+									"",
+									"",
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"postman.setEnvironmentVariable(\"wslug\", \"xxx-pydio-test-ws-three\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/admin/workspaces?format=json",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "payload",
+									"value": "{\n  \"display\": \"{{wslug}}\",\n  \"accessType\": \"ajxp_template_{{ws_template_id}}\",\n  \"isTemplate\": false,\n  \"parameters\": {\n    \"PATH\": \"AJXP_DATA_PATH/{{wslug}}\"\n  }\n}",
+									"type": "text"
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Create denied workspace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"if (responseBody.startsWith(\"{\")){",
+									"    var rjson = JSON.parse(responseBody);",
+									"    tests[\"created\"] =  rjson.message.message.startsWith(\"Successfully created workspace! You can now add some 'Metadata Sources'\");",
+									"} else {",
+									"    tests[\"created\"] = false;",
+									"}",
+									"",
+									"",
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"postman.setEnvironmentVariable(\"dslug\", \"xxx-pydio-test-ws-four\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/admin/workspaces?format=json",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "payload",
+									"value": "{\n  \"display\": \"{{dslug}}\",\n  \"accessType\": \"ajxp_template_{{ws_template_id}}\",\n  \"isTemplate\": false,\n  \"parameters\": {\n    \"PATH\": \"AJXP_DATA_PATH/{{dslug}}\"\n  }\n}",
+									"type": "text"
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Find the new created workspaces ids",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"var keys = Object.keys(jsonData.data.children);",
+									"",
+									"var rSlug = postman.getEnvironmentVariable(\"rslug\");",
+									"var rwSlug = postman.getEnvironmentVariable(\"rwslug\");",
+									"var wSlug = postman.getEnvironmentVariable(\"wslug\");",
+									"var dSlug = postman.getEnvironmentVariable(\"dslug\");",
+									"",
+									"for (var i = 0; i < keys.length; i++) {",
+									"    var key = keys[i];",
+									"    var ws = jsonData.data.children[key];",
+									"    ",
+									"    console.log(\"slug : \" + ws.slug);",
+									"    ",
+									"    if (ws.slug === rSlug) {",
+									"        postman.setEnvironmentVariable(\"r_ws_id\", ws.repository_id)",
+									"        tests[\"found read-only workspace\"] = true;",
+									"        ",
+									"    } else if (ws.slug === rwSlug){",
+									"        postman.setEnvironmentVariable(\"rw_ws_id\", ws.repository_id)",
+									"        tests[\"found read-write workspace\"] = true;",
+									"        ",
+									"    } else if (ws.slug === wSlug){",
+									"        postman.setEnvironmentVariable(\"w_ws_id\", ws.repository_id)",
+									"        tests[\"found write-only workspace\"] = true;",
+									"        ",
+									"    } else if (ws.slug === dSlug){",
+									"        postman.setEnvironmentVariable(\"d_ws_id\", ws.repository_id)",
+									"        tests[\"found deny workspace\"] = true;",
+									"    }",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/admin/workspaces?format=json",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Create role",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"if (responseBody.startsWith(\"{\")){",
+									"    console.log(\"might be json\");",
+									"    var rjson = JSON.parse(responseBody);",
+									"    tests[\"role created\"] = rjson.message.message.startsWith(\"Role successfully created\");",
+									"    ",
+									"} else if (responseBody.startsWith(\"<?\")) {",
+									"    var rjson = xml2Json(responseBody);",
+									"    ",
+									"    if(rjson.tree.message[\"_\"].startsWith(\"Role already exists\")){",
+									"        tests[\"already exists\"] = true;",
+									"    } else {",
+									"        tests[\"created\"] = false;",
+									"    }",
+									"    ",
+									"} else {",
+									"    tests[\"created\"] = false",
+									"}"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"postman.setEnvironmentVariable(\"new_role_id\", \"xxxpydio_fs_tester\");",
+									"var acl = {",
+									"    \"ACL\":{},",
+									"    \"MASKS\": {},",
+									"    \"ACTIONS\": {},",
+									"    \"PARAMETERS\": {},",
+									"    \"APPLIES\": {}",
+									"}",
+									"",
+									"acl.ACL[postman.getEnvironmentVariable(\"r_ws_id\")] = \"r\";",
+									"acl.ACL[postman.getEnvironmentVariable(\"rw_ws_id\")] = \"rw\";",
+									"acl.ACL[postman.getEnvironmentVariable(\"w_ws_id\")] = \"w\";",
+									"acl.ACL[postman.getEnvironmentVariable(\"d_ws_id\")] = \"\";",
+									"",
+									"postman.setEnvironmentVariable(\"role_acl\", JSON.stringify(acl));"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Set role acls",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"var role = JSON.parse(postman.getEnvironmentVariable(\"role_acl\"));",
+									"",
+									"var lkeys = Object.keys(role.ACL);",
+									"var matches = true",
+									"for (var i = 0; i < lkeys.Length; i++){",
+									"    var k = lkeys[i];",
+									"    matches &= (role.ACL[k] === jsonData.ACL[k]);",
+									"}",
+									"",
+									"tests[\"received matches with sent\"] = matches;"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{role_acl}}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "List roles",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var rjson = JSON.parse(responseBody);",
+									"",
+									"var codeIs200 = responseCode.code === 200",
+									"tests[\"Status code is 200\"] = codeIs200;",
+									"",
+									"if (codeIs200) {",
+									"    var roleId = postman.getEnvironmentVariable(\"new_role_id\");",
+									"    tests[\"Found created role\"] = rjson.children[roleId];",
+									"    ",
+									"    if (rjson.children[roleId]){",
+									"        var setAcl = JSON.parse(postman.getEnvironmentVariable(\"role_acl\")).ACL;",
+									"        var receivedAcl = rjson.children[roleId].role.ACL;",
+									"        ",
+									"        var keys = Object.keys(receivedAcl);",
+									"        var matches = true;",
+									"        ",
+									"        for (var i = 0; i < keys.length; i++){",
+									"            var k = keys[i];",
+									"            matches &= (setAcl[k] === receivedAcl[k]);",
+									"        }",
+									"        tests[\"and acl matches\"] = matches;",
+									"    }",
+									"}",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/admin/roles?format=json",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Assign role to user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"",
+									"var rjson = JSON.parse(responseBody);",
+									"",
+									"tests[\"Role assigned to user\"] = rjson.message.startsWith(\"Role added to user \" + postman.getEnvironmentVariable(\"user\"));"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/admin/people/AJXP_USR_/{{user}}?format=json",
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"resourceType\":\"user\",\"parameterName\":\"userAddRole\",\"parameterValue\":\"{{new_role_id}}\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get user access rights",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var rjson = JSON.parse(responseBody);",
+									"",
+									"var repos = rjson.user.repositories.repo;",
+									"var rights = {};",
+									"",
+									"for(var i = 0; i < repos.length; i++) {",
+									"    var repo = repos[i];",
+									"    var wsId = repo[\"@id\"];",
+									"    ",
+									"    if (",
+									"        [",
+									"        postman.getEnvironmentVariable(\"r_ws_id\"),",
+									"        postman.getEnvironmentVariable(\"d_ws_id\"),",
+									"        postman.getEnvironmentVariable(\"w_ws_id\"),",
+									"        postman.getEnvironmentVariable(\"rw_ws_id\") ].indexOf(wsId) >  -1)",
+									"    {",
+									"        rights[wsId] = repo[\"@acl\"];",
+									"    }",
+									"}",
+									"postman.setEnvironmentVariable(\"user_rights\", JSON.stringify(rights));"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{user}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/user?format=json",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic eHh4cHlkaW9fdGVzdF9uZXdtYW46bmV3bWFu",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2 - Fs WRITE",
+			"description": "",
+			"item": [
+				{
+					"name": "Admin creates file (in user read only repo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"var codeIs200 = responseCode.code === 200;",
+									"",
+									"",
+									"if (responseCode.code == 200){",
+									"    if (responseBody.startsWith(\"{\")){",
+									"        var rjson = JSON.parse(responseBody);",
+									"        tests[\"file created\"] = rjson.nodesDiff.add[0];",
+									"        tests[\"Admin can create file on this ws (as expected)\"] = true;",
+									"        ",
+									"    } else if(responseBody.startsWith(\"<?\")){",
+									"        var rjson = xml2Json(responseBody);",
+									"        if(rjson.tree.message[\"_\"].startsWith(\"This file already exists\")){",
+									"            tests[\"file already exists\"] = true;",
+									"        }",
+									"    } else {",
+									"        tests[\"Failed to create file\"] = true;",
+									"    }",
+									"} else if (responseCode.code == 401) {",
+									"    tests[\"Admin unexpectedly cannot create file on this ws\"] = true;",
+									"}",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/fs/{{r_ws_id}}/a.txt?format=json",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "User create file (in user read only repo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"var codeIs200 = responseCode.code === 200;",
+									"",
+									"if (responseCode.code == 200) {",
+									"    if (responseBody.startsWith(\"{\")) {",
+									"        var rjson = JSON.parse(responseBody);",
+									"        tests[\"file created\"] = rjson.nodesDiff.add[0];",
+									"        ",
+									"    } else if(responseBody.startsWith(\"<?\")){",
+									"        var rjson = xml2Json(responseBody);",
+									"        var msg = rjson.tree.message[\"_\"];",
+									"        ",
+									"        if(msg.startsWith(\"This file already exists\")){",
+									"            tests[\"file already exists\"] = true;",
+									"            ",
+									"        } else if(msg.startsWith(\"You have no write permission on this folder\")) {",
+									"            var userRights = JSON.parse(postman.getEnvironmentVariable(\"user_rights\"))[postman.getEnvironmentVariable(\"r_ws_id\")];",
+									"            if (userRights.indexOf(\"w\") !== -1){",
+									"                tests[\"user has write right but cannot write\"] = false;",
+									"            } else {",
+									"                tests[\"Create failed cause user does not have write right on this workspace\"] = true;",
+									"            }",
+									"        }",
+									"        ",
+									"    } else {",
+									"        tests[\"Failed to create file (may be a server side issue)\"] = true;",
+									"    }",
+									"    ",
+									"} else if (responseCode.code == 401) {",
+									"    var userRights = JSON.parse(postman.getEnvironmentVariable(\"user_rights\"))[postman.getEnvironmentVariable(\"r_ws_id\")];",
+									"    if (userRights.indexOf(\"w\") !== -1){",
+									"        tests[\"user has write right but cannot write\"] = false;",
+									"    } else {",
+									"        tests[\"user does not have write right on this workspace\"] = true;",
+									"    }",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{user}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/fs/{{r_ws_id}}/u.txt?format=json",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic eHh4cHlkaW9fdGVzdF9uZXdtYW46bmV3bWFu",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Create File (in user read-write repo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"var codeIs200 = responseCode.code === 200;",
+									"",
+									"",
+									"if (responseCode.code == 200){",
+									"    if (responseBody.startsWith(\"{\")){",
+									"        var rjson = JSON.parse(responseBody);",
+									"        tests[\"file created\"] = rjson.nodesDiff.add[0];",
+									"        tests[\"Admin can create file on this ws (as expected)\"] = true;",
+									"        ",
+									"    } else if(responseBody.startsWith(\"<?\")){",
+									"        var rjson = xml2Json(responseBody);",
+									"        if(rjson.tree.message[\"_\"].startsWith(\"This file already exists\")){",
+									"            tests[\"file already exists\"] = true;",
+									"        }",
+									"    } else {",
+									"        tests[\"Failed to create file\"] = true;",
+									"    }",
+									"} else if (responseCode.code == 401) {",
+									"    tests[\"Admin unexpectedly cannot create file on this ws\"] = true;",
+									"}",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/fs/{{rw_ws_id}}/a.txt?format=json",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "User creates file (in user read-write repo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"var codeIs200 = responseCode.code === 200;",
+									"",
+									"if (responseCode.code == 200) {",
+									"    if (responseBody.startsWith(\"{\")) {",
+									"        var rjson = JSON.parse(responseBody);",
+									"        tests[\"file created\"] = rjson.nodesDiff.add[0];",
+									"        ",
+									"    } else if(responseBody.startsWith(\"<?\")){",
+									"        var rjson = xml2Json(responseBody);",
+									"        var msg = rjson.tree.message[\"_\"];",
+									"        ",
+									"        if(msg.startsWith(\"This file already exists\")){",
+									"            tests[\"file already exists\"] = true;",
+									"            ",
+									"        } else if(msg.startsWith(\"You have no write permission on this folder\")) {",
+									"            var userRights = JSON.parse(postman.getEnvironmentVariable(\"user_rights\"))[postman.getEnvironmentVariable(\"rw_ws_id\")];",
+									"            if (userRights.indexOf(\"w\") !== -1){",
+									"                tests[\"user has write right but cannot write\"] = false;",
+									"            } else {",
+									"                tests[\"Create failed cause user does not have write right on this workspace\"] = true;",
+									"            }",
+									"        }",
+									"        ",
+									"    } else {",
+									"        tests[\"Failed to create file (may be a server side issue)\"] = true;",
+									"    }",
+									"    ",
+									"} else if (responseCode.code == 401) {",
+									"    var userRights = JSON.parse(postman.getEnvironmentVariable(\"user_rights\"))[postman.getEnvironmentVariable(\"rw_ws_id\")];",
+									"    if (userRights.indexOf(\"w\") !== -1){",
+									"        tests[\"user has write right but cannot write\"] = false;",
+									"    } else {",
+									"        tests[\"user does not have write right on this workspace\"] = true;",
+									"    }",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{user}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/fs/{{rw_ws_id}}/u.txt?format=json",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic eHh4cHlkaW9fdGVzdF9uZXdtYW46bmV3bWFu",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Create File (write only)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"var codeIs200 = responseCode.code === 200;",
+									"",
+									"",
+									"if (responseCode.code == 200){",
+									"    if (responseBody.startsWith(\"{\")){",
+									"        var rjson = JSON.parse(responseBody);",
+									"        tests[\"file created\"] = rjson.nodesDiff.add[0];",
+									"        tests[\"Admin can create file on this ws (as expected)\"] = true;",
+									"        ",
+									"    } else if(responseBody.startsWith(\"<?\")){",
+									"        var rjson = xml2Json(responseBody);",
+									"        if(rjson.tree.message[\"_\"].startsWith(\"This file already exists\")){",
+									"            tests[\"file already exists\"] = true;",
+									"        }",
+									"    } else {",
+									"        tests[\"Failed to create file\"] = true;",
+									"    }",
+									"} else if (responseCode.code == 401) {",
+									"    tests[\"Admin unexpectedly cannot create file on this ws\"] = true;",
+									"}",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/fs/{{w_ws_id}}/a.txt?format=json",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "User creates file (write only)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"var codeIs200 = responseCode.code === 200;",
+									"",
+									"if (responseCode.code == 200) {",
+									"    if (responseBody.startsWith(\"{\")) {",
+									"        var rjson = JSON.parse(responseBody);",
+									"        tests[\"file created\"] = rjson.nodesDiff.add[0];",
+									"        ",
+									"    } else if(responseBody.startsWith(\"<?\")){",
+									"        var rjson = xml2Json(responseBody);",
+									"        var msg = rjson.tree.message[\"_\"];",
+									"        ",
+									"        if(msg.startsWith(\"This file already exists\")){",
+									"            tests[\"file already exists\"] = true;",
+									"            ",
+									"        } else if(msg.startsWith(\"You have no write permission on this folder\")) {",
+									"            var userRights = JSON.parse(postman.getEnvironmentVariable(\"user_rights\"))[postman.getEnvironmentVariable(\"w_ws_id\")];",
+									"            if (userRights.indexOf(\"w\") !== -1){",
+									"                tests[\"user has write right but cannot write\"] = false;",
+									"            } else {",
+									"                tests[\"Create failed cause user does not have write right on this workspace\"] = true;",
+									"            }",
+									"            ",
+									"        } else if(msg.startsWith(\"You have no read permission on this folder\")){",
+									"            tests[\"wtf? read required for write\"] = false;",
+									"        }",
+									"        ",
+									"    } else {",
+									"        tests[\"Failed to create file (may be a server side issue)\"] = true;",
+									"    }",
+									"    ",
+									"} else if (responseCode.code == 401) {",
+									"    var userRights = JSON.parse(postman.getEnvironmentVariable(\"user_rights\"))[postman.getEnvironmentVariable(\"w_ws_id\")];",
+									"    if (userRights.indexOf(\"w\") !== -1){",
+									"        tests[\"user has write right but cannot write\"] = false;",
+									"    } else {",
+									"        tests[\"user does not have write right on this workspace\"] = true;",
+									"    }",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{user}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/fs/{{w_ws_id}}/u.txt?format=json",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic eHh4cHlkaW9fdGVzdF9uZXdtYW46bmV3bWFu",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Create File (denied access)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"var codeIs200 = responseCode.code === 200;",
+									"",
+									"",
+									"if (responseCode.code == 200){",
+									"    if (responseBody.startsWith(\"{\")){",
+									"        var rjson = JSON.parse(responseBody);",
+									"        tests[\"file created\"] = rjson.nodesDiff.add[0];",
+									"        tests[\"Admin can create file on this ws (as expected)\"] = true;",
+									"        ",
+									"    } else if(responseBody.startsWith(\"<?\")){",
+									"        var rjson = xml2Json(responseBody);",
+									"        if(rjson.tree.message[\"_\"].startsWith(\"This file already exists\")){",
+									"            tests[\"file already exists\"] = true;",
+									"        }",
+									"    } else {",
+									"        tests[\"Failed to create file\"] = true;",
+									"    }",
+									"} else if (responseCode.code == 401) {",
+									"    tests[\"Admin unexpectedly cannot create file on this ws\"] = true;",
+									"}",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/fs/{{d_ws_id}}/a.txt?format=json",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "User creates file (denied access)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"var codeIs200 = responseCode.code === 200;",
+									"",
+									"if (responseCode.code == 200) {",
+									"    if (responseBody.startsWith(\"{\")) {",
+									"        var rjson = JSON.parse(responseBody);",
+									"        tests[\"file created\"] = rjson.nodesDiff.add[0];",
+									"        ",
+									"    } else if(responseBody.startsWith(\"<?\")){",
+									"        var rjson = xml2Json(responseBody);",
+									"        var msg = rjson.tree.message[\"_\"];",
+									"        ",
+									"        if(msg.startsWith(\"This file already exists\")){",
+									"            tests[\"file already exists\"] = true;",
+									"            ",
+									"        } else if(msg.startsWith(\"You have no write permission on this folder\")) {",
+									"            var userRights = JSON.parse(postman.getEnvironmentVariable(\"user_rights\"))[postman.getEnvironmentVariable(\"w_ws_id\")];",
+									"            if (userRights.indexOf(\"w\") !== -1){",
+									"                tests[\"user has write right but cannot write\"] = false;",
+									"            } else {",
+									"                tests[\"Create failed cause user does not have write right on this workspace\"] = true;",
+									"            }",
+									"            ",
+									"        } else if(msg.startsWith(\"You have no read permission on this folder\")){",
+									"            tests[\"wtf? read required for write\"] = false;",
+									"        }",
+									"        ",
+									"    } else {",
+									"        tests[\"Failed to create file (may be a server side issue)\"] = true;",
+									"    }",
+									"    ",
+									"} else if (responseCode.code == 401) {",
+									"    var userRights = JSON.parse(postman.getEnvironmentVariable(\"user_rights\"))[postman.getEnvironmentVariable(\"d_ws_id\")];",
+									"    if (userRights === undefined) {",
+									"            tests[\"no access on this workspace\"] = true;",
+									"            ",
+									"    } else {",
+									"        if (userRights.indexOf(\"w\") !== -1){",
+									"            tests[\"user has write right but cannot write\"] = false;",
+									"        } else {",
+									"            tests[\"user does not have write right on this workspace\"] = true;",
+									"        }",
+									"    }",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{user}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/fs/{{d_ws_id}}/u.txt?format=json",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic eHh4cHlkaW9fdGVzdF9uZXdtYW46bmV3bWFu",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3 - Fs READ",
+			"description": "",
+			"item": [
+				{
+					"name": "Admin reads file (from user read only repo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"var codeIs200 = responseCode.code === 200;",
+									"",
+									"",
+									"if (responseCode.code == 200){",
+									"    if (responseBody.startsWith(\"{\")){",
+									"        var rjson = JSON.parse(responseBody);",
+									"        var found = rjson.children[\"/a.txt\"];",
+									"        if (found){",
+									"            tests[\"Admin can read file on this ws (as expected)\"] = true;",
+									"        } else {",
+									"            tests[\"Could not find file\"] = false;",
+									"        }",
+									"        ",
+									"    } else {",
+									"        tests[\"Failed to read file\"] = true;",
+									"    }",
+									"} else if (responseCode.code == 401) {",
+									"    tests[\"Admin unexpectedly cannot read file on this ws\"] = true;",
+									"}",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/fs/{{r_ws_id}}/a.txt?format=json",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "User reads file (in user read only repo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"",
+									"if (responseCode.code == 200) {",
+									"    ",
+									"    if (responseBody.startsWith(\"{\")) {",
+									"        var rjson = JSON.parse(responseBody);",
+									"        tests[\"Got file\"] = rjson.children[\"/a.txt\"];",
+									"        ",
+									"        ",
+									"    } else if(responseBody.startsWith(\"<?\")) {",
+									"        var rjson = xml2Json(responseBody);",
+									"        var tree = rjson.tree;",
+									"        ",
+									"    } else {",
+									"        tests[\"Failed to read file (may be a server side issue)\"] = true;",
+									"    }",
+									"    ",
+									"} else if (responseCode.code == 401) {",
+									"    var userRights = JSON.parse(postman.getEnvironmentVariable(\"user_rights\"))[postman.getEnvironmentVariable(\"r_ws_id\")];",
+									"    if (userRights.indexOf(\"r\") !== -1) {",
+									"        tests[\"User has READ right but cannot read\"] = false;",
+									"    } else {",
+									"        tests[\"User does not have READ right on this workspace\"] = true;",
+									"    }",
+									"    ",
+									"} else {",
+									"    tests[\"Failed to read must be a server side problem\"] = false;",
+									"}",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{user}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/fs/{{r_ws_id}}/a.txt?format=json",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic eHh4cHlkaW9fdGVzdF9uZXdtYW46bmV3bWFu",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Admin reads File (in user read-write repo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"var codeIs200 = responseCode.code === 200;",
+									"",
+									"",
+									"if (responseCode.code == 200){",
+									"    if (responseBody.startsWith(\"{\")){",
+									"        var rjson = JSON.parse(responseBody);",
+									"        var found = rjson.children[\"/a.txt\"];",
+									"        if (found){",
+									"            tests[\"Admin can read file on this ws (as expected)\"] = true;",
+									"        } else {",
+									"            tests[\"Could not find file\"] = false;",
+									"        }",
+									"        ",
+									"    } else {",
+									"        tests[\"Failed to read file\"] = true;",
+									"    }",
+									"} else if (responseCode.code == 401) {",
+									"    tests[\"Admin unexpectedly cannot read file on this ws\"] = true;",
+									"}",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/fs/{{rw_ws_id}}/a.txt?format=json",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "User reads file (in user read-write repo)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"",
+									"if (responseCode.code == 200) {",
+									"    ",
+									"    if (responseBody.startsWith(\"{\")) {",
+									"        var rjson = JSON.parse(responseBody);",
+									"        tests[\"Got file\"] = rjson.children[\"/u.txt\"];",
+									"        ",
+									"        ",
+									"    } else if(responseBody.startsWith(\"<?\")) {",
+									"        var rjson = xml2Json(responseBody);",
+									"        var tree = rjson.tree;",
+									"        ",
+									"    } else {",
+									"        tests[\"Failed to read file (may be a server side issue)\"] = true;",
+									"    }",
+									"    ",
+									"} else if (responseCode.code == 401) {",
+									"    var userRights = JSON.parse(postman.getEnvironmentVariable(\"user_rights\"))[postman.getEnvironmentVariable(\"rw_ws_id\")];",
+									"    if (userRights.indexOf(\"r\") !== -1) {",
+									"        tests[\"User has READ right but cannot read\"] = false;",
+									"    } else {",
+									"        tests[\"User does not have READ right on this workspace\"] = true;",
+									"    }",
+									"    ",
+									"} else {",
+									"    tests[\"Failed to read must be a server side problem\"] = false;",
+									"}",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{user}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/fs/{{rw_ws_id}}/u.txt?format=json",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic eHh4cHlkaW9fdGVzdF9uZXdtYW46bmV3bWFu",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Admin reads File (write only)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"var codeIs200 = responseCode.code === 200;",
+									"",
+									"",
+									"if (responseCode.code == 200){",
+									"    if (responseBody.startsWith(\"{\")){",
+									"        var rjson = JSON.parse(responseBody);",
+									"        var found = rjson.children[\"/a.txt\"];",
+									"        if (found){",
+									"            tests[\"Admin can read file on this ws (as expected)\"] = true;",
+									"        } else {",
+									"            tests[\"Could not find file\"] = false;",
+									"        }",
+									"        ",
+									"    } else {",
+									"        tests[\"Failed to read file\"] = true;",
+									"    }",
+									"} else if (responseCode.code == 401) {",
+									"    tests[\"Admin unexpectedly cannot read file on this ws\"] = true;",
+									"}",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/fs/{{w_ws_id}}/a.txt?format=json",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "User reads file (write only)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"",
+									"if (responseCode.code == 200) {",
+									"    ",
+									"    if (responseBody.startsWith(\"{\")) {",
+									"        var rjson = JSON.parse(responseBody);",
+									"        tests[\"Got file\"] = rjson.children[\"/a.txt\"];",
+									"        ",
+									"        ",
+									"    } else if(responseBody.startsWith(\"<?\")) {",
+									"        var rjson = xml2Json(responseBody);",
+									"        var tree = rjson.tree;",
+									"        ",
+									"    } else {",
+									"        tests[\"Failed to read file (may be a server side issue)\"] = true;",
+									"    }",
+									"    ",
+									"} else if (responseCode.code == 401) {",
+									"    var userRights = JSON.parse(postman.getEnvironmentVariable(\"user_rights\"))[postman.getEnvironmentVariable(\"r_ws_id\")];",
+									"    if (userRights.indexOf(\"r\") !== -1) {",
+									"        tests[\"User has READ right but cannot read\"] = false;",
+									"    } else {",
+									"        tests[\"User does not have READ right on this workspace\"] = true;",
+									"    }",
+									"    ",
+									"} else {",
+									"    tests[\"Failed to read must be a server side problem\"] = false;",
+									"}",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{user}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/fs/{{w_ws_id}}/a.txt?format=json",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic eHh4cHlkaW9fdGVzdF9uZXdtYW46bmV3bWFu",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Admin reads File (denied access)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"var codeIs200 = responseCode.code === 200;",
+									"",
+									"",
+									"if (responseCode.code == 200){",
+									"    if (responseBody.startsWith(\"{\")){",
+									"        var rjson = JSON.parse(responseBody);",
+									"        var found = rjson.children[\"/a.txt\"];",
+									"        if (found){",
+									"            tests[\"Admin can read file on this ws (as expected)\"] = true;",
+									"        } else {",
+									"            tests[\"Could not find file\"] = false;",
+									"        }",
+									"        ",
+									"    } else {",
+									"        tests[\"Failed to read file\"] = true;",
+									"    }",
+									"} else if (responseCode.code == 401) {",
+									"    tests[\"Admin unexpectedly cannot read file on this ws\"] = true;",
+									"}",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/fs/{{d_ws_id}}/a.txt?format=json",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "User reads file (denied access)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"",
+									"if (responseCode.code == 200) {",
+									"    ",
+									"    if (responseBody.startsWith(\"{\")) {",
+									"        var rjson = JSON.parse(responseBody);",
+									"        tests[\"Got file\"] = rjson.children[\"/a.txt\"];",
+									"        ",
+									"        ",
+									"    } else if(responseBody.startsWith(\"<?\")) {",
+									"        var rjson = xml2Json(responseBody);",
+									"        var tree = rjson.tree;",
+									"        ",
+									"    } else {",
+									"        tests[\"Failed to read file (may be a server side issue)\"] = true;",
+									"    }",
+									"    ",
+									"} else if (responseCode.code == 401) {",
+									"    if (responseBody === \"You are not authorized to access this API.\"){",
+									"            tests[\"User cannot access this workspace\"] = true;",
+									"    } else {",
+									"        var userRights = JSON.parse(postman.getEnvironmentVariable(\"user_rights\"))[postman.getEnvironmentVariable(\"d_ws_id\")];",
+									"        if (userRights.indexOf(\"r\") !== -1) {",
+									"            tests[\"User has READ right but cannot read\"] = false;",
+									"        } else {",
+									"            tests[\"User does not have READ right on this workspace\"] = true;",
+									"        }",
+									"    }",
+									"    ",
+									"} else {",
+									"    tests[\"Failed to read must be a server side problem\"] = false;",
+									"}",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{user}}",
+								"password": "{{password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/fs/{{d_ws_id}}/a.txt?format=json",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic eHh4cHlkaW9fdGVzdF9uZXdtYW46bmV3bWFu",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6 - clean copy",
+			"description": "",
+			"item": [
+				{
+					"name": "Delete role",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (responseBody.startsWith(\"{\")){",
+									"    var rjson = JSON.parse(responseBody);",
+									"    tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"    tests[\"User deteleted\"] = rjson.message.message.startsWith(\"Successfully deleted\");",
+									"    ",
+									"} else if (responseBody.startsWith(\"<?\")){",
+									"    var rjson = xml2Json(responseBody);",
+									"     ",
+									"    if(rjson.tree.message[\"_\"].startsWith(\"Cannot find role\")){",
+									"        tests[\"role does not exists\"] = true;",
+									"    } else {",
+									"        tests[\"Deletion failed\"] = false;",
+									"    }",
+									"    ",
+									"} else {",
+									"    tests[\"Deletion failed\"] = false;",
+									"}",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete created user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var rjson = JSON.parse(responseBody);",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var alreadyDeleted = rjson.message.message.startsWith(\"Successfully deleted group (1)\");",
+									"var deleted = rjson.message.message.startsWith(\"User successfully erased (1)\");",
+									"",
+									"if(alreadyDeleted){",
+									"    tests[\"User already deleted\"] = true;",
+									"} else if (deleted){",
+									"    tests[\"User deleted\"] = true;",
+									"} else {",
+									"    tests[\"Failed to delete user\"] = true;",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/admin/people/{{user}}?format=json",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete read-only workspace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"",
+									"if (responseBody.startsWith(\"{\")) {",
+									"    var rjson = JSON.parse(responseBody)",
+									"    tests[\"workspace deleted\"] = rjson.message.message.startsWith(\"Successfully deleted workspace\");",
+									"} else {",
+									"    tests[\"The workspace does not exist\"] = false;",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/admin/workspaces/{{r_ws_id}}?format=json",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete read-write workspace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"",
+									"if (responseBody.startsWith(\"{\")) {",
+									"    var rjson = JSON.parse(responseBody)",
+									"    tests[\"workspace deleted\"] = rjson.message.message.startsWith(\"Successfully deleted workspace\");",
+									"} else {",
+									"    tests[\"The workspace does not exist\"] = false;",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/admin/workspaces/{{rw_ws_id}}?format=json",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete write-only workspace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"",
+									"if (responseBody.startsWith(\"{\")) {",
+									"    var rjson = JSON.parse(responseBody)",
+									"    tests[\"workspace deleted\"] = rjson.message.message.startsWith(\"Successfully deleted workspace\");",
+									"} else {",
+									"    tests[\"The workspace does not exist\"] = false;",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/admin/workspaces/{{w_ws_id}}?format=json",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete denied worksapce",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"",
+									"if (responseBody.startsWith(\"{\")) {",
+									"    var rjson = JSON.parse(responseBody)",
+									"    tests[\"workspace deleted\"] = rjson.message.message.startsWith(\"Successfully deleted workspace\");",
+									"} else {",
+									"    tests[\"The workspace does not exist\"] = false;",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{url}}/api/v2/admin/workspaces/{{d_ws_id}}?format=json",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

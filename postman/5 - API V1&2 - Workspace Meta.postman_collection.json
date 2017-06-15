@@ -1,0 +1,1186 @@
+{
+	"variables": [],
+	"info": {
+		"name": "5 - API V1&2 - Workspace Meta",
+		"_postman_id": "7f653349-8c5a-776b-ab90-9b4edc2579fb",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create workspace",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"if (responseBody.startsWith(\"{\")) {",
+							"    var rjson = JSON.parse(responseBody);",
+							"    tests[\"created\"] =  rjson.message.message.startsWith(\"Successfully created workspace! You can now add some 'Metadata Sources'\");",
+							"    var wsId = rjson.reload.pendingSelection;",
+							"    postman.setEnvironmentVariable(\"ws\", wsId);",
+							"    tests[\"got workspace id\"] = wsId;",
+							"    ",
+							"} else {",
+							"    tests[\"created\"] = false;",
+							"    ",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{admin}}",
+						"password": "{{admin_password}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v2/admin/workspaces?format=json",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"admin",
+						"workspaces"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46c2VjdXJpdHk=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "payload",
+							"value": "{\n  \"display\": \"Meta\",\n  \"accessType\": \"fs\",\n  \"isTemplate\": false,\n  \"parameters\": {\n    \"PATH\": \"AJXP_DATA_PATH/Meta\",\n    \"CREATE\": true,\n    \"RECYCLE_BIN\": \"recycle_bin\",\n    \"CHMOD_VALUE\": \"0600\",\n    \"DEFAULT_RIGHTS\": \"rw\",\n    \"PAGINATION_THRESHOLD\": 500,\n    \"PAGINATION_NUMBER\": 200\n  }\n}",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create role ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"if (responseBody.startsWith(\"{\")){",
+							"    console.log(\"might be json\");",
+							"    var rjson = JSON.parse(responseBody);",
+							"    tests[\"role created\"] = rjson.message.message.startsWith(\"Role successfully created\");",
+							"    ",
+							"} else if (responseBody.startsWith(\"<?\")) {",
+							"    var rjson = xml2Json(responseBody);",
+							"    ",
+							"    if(rjson.tree.message[\"_\"].startsWith(\"Role already exists\")){",
+							"        tests[\"already exists\"] = true;",
+							"    } else {",
+							"        tests[\"created\"] = false;",
+							"    }",
+							"    ",
+							"} else {",
+							"    tests[\"created\"] = false",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{admin}}",
+						"password": "{{admin_password}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v2/admin/roles/watcher?format=json",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"admin",
+						"roles",
+						"watcher"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46c2VjdXJpdHk=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Set role ACL (rw on Workspace)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"received matches with sent\"] = jsonData.ACL[postman.getEnvironmentVariable(\"ws\")] == \"rw\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{admin}}",
+						"password": "{{admin_password}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v2/admin/roles/watcher?format=json",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"admin",
+						"roles",
+						"watcher"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46c2VjdXJpdHk=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"ACL\":{\n    \t\"{{ws}}\": \"rw\"\n    },\n    \"MASKS\": {},\n    \"ACTIONS\": {},\n    \"PARAMETERS\": {},\n    \"APPLIES\": {}\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create user 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"if (responseBody.startsWith(\"{\")) {",
+							"    var data = JSON.parse(responseBody);",
+							"    tests[\"user created\"] = ",
+							"    (data.message.level === \"Info\" && data.reload.pendingSelection === postman.getEnvironmentVariable(\"user\"));",
+							"} else {",
+							"    var data = xml2Json(responseBody);",
+							"    ",
+							"    if(data.tree.message[\"_\"].startsWith(\"User already exists\")){",
+							"        tests[\"already exists\"] = true;",
+							"    } else {",
+							"        tests[\"creation failed\"] = false;",
+							"    }",
+							"}",
+							""
+						]
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"postman.setEnvironmentVariable(\"user1\", \"watson\");",
+							"postman.setEnvironmentVariable(\"password1\", \"security\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{admin}}",
+						"password": "{{admin_password}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v2/admin/people/{{user1}}?format=json",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"admin",
+						"people",
+						"{{user1}}"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46c2VjdXJpdHk=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "resourceType",
+							"type": "text",
+							"value": "user"
+						},
+						{
+							"key": "userPass",
+							"type": "text",
+							"value": "{{password1}}"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Assign role to user 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+							"",
+							"var rjson = JSON.parse(responseBody);",
+							"",
+							"tests[\"Role assigned to user\"] = rjson.message.startsWith(\"Role added to user \" + postman.getEnvironmentVariable(\"user\"));"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{admin}}",
+						"password": "{{admin_password}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v2/admin/people/{{user1}}?format=json",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"admin",
+						"people",
+						"{{user1}}"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46c2VjdXJpdHk=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"resourceType\":\"user\",\"parameterName\":\"userAddRole\",\"parameterValue\":\"watcher\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create folder",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"if (responseBody.startsWith(\"{\")) {",
+							"    var rjson = JSON.parse(responseBody);",
+							"    var add = rjson.nodesDiff.add",
+							"    tests[\"Folder created\"] = add",
+							"    postman.setEnvironmentVariable(\"folder\", add[0].path);",
+							"} else {",
+							"    var rjson = xml2Json(responseBody);",
+							"    tests[\"Folder not created\"] = false;",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{user1}}",
+						"password": "{{password1}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v2/fs/{{ws}}/watched/?format=json",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"fs",
+						"{{ws}}",
+						"watched",
+						""
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic d2F0c29uOnNlY3VyaXR5",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create user 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"if (responseBody.startsWith(\"{\")) {",
+							"    var data = JSON.parse(responseBody);",
+							"    tests[\"user created\"] = ",
+							"    (data.message.level === \"Info\" && data.reload.pendingSelection === postman.getEnvironmentVariable(\"user2\"));",
+							"} else {",
+							"    var data = xml2Json(responseBody);",
+							"    ",
+							"    if(data.tree.message[\"_\"].startsWith(\"User already exists\")){",
+							"        tests[\"already exists\"] = true;",
+							"    } else {",
+							"        tests[\"creation failed\"] = false;",
+							"    }",
+							"}",
+							""
+						]
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"postman.setEnvironmentVariable(\"user2\", \"lilli\");",
+							"postman.setEnvironmentVariable(\"password2\", \"security\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{admin}}",
+						"password": "{{admin_password}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v2/admin/people/{{user2}}?format=json",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"admin",
+						"people",
+						"{{user2}}"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46c2VjdXJpdHk=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "resourceType",
+							"type": "text",
+							"value": "user"
+						},
+						{
+							"key": "userPass",
+							"type": "text",
+							"value": "{{password2}}"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Assign role to user 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+							"",
+							"var rjson = JSON.parse(responseBody);",
+							"",
+							"tests[\"Role assigned to user\"] = rjson.message.startsWith(\"Role added to user \" + postman.getEnvironmentVariable(\"user\"));"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{admin}}",
+						"password": "{{admin_password}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v2/admin/people/AJXP_USR_/{{user2}}?format=json",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"admin",
+						"people",
+						"AJXP_USR_",
+						"{{user2}}"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46c2VjdXJpdHk=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"resourceType\":\"user\",\"parameterName\":\"userAddRole\",\"parameterValue\":\"watcher\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Watch read/change on a folder",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"var rjson = JSON.parse(responseBody);",
+							"tests[\"folder watched\"] = rjson.update[0].meta_watched == \"META_WATCH_BOTH\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{user1}}",
+						"password": "{{password1}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/{{ws}}/toggle_watch{{folder}}?format=json",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"{{ws}}",
+						"toggle_watch{{folder}}"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic d2F0c29uOnNlY3VyaXR5",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "watch_action",
+							"value": "watch_both",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "User 2 upload file in folder",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"postman.setEnvironmentVariable(\"file\", \"uploaded.txt\")"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{user2}}",
+						"password": "{{password2}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v2/io/{{ws}}/watched/{{file}}?format=json",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"io",
+						"{{ws}}",
+						"watched",
+						"{{file}}"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Length",
+						"value": "20",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic bGlsbGk6c2VjdXJpdHk=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "aaaaaaaaaaaaaaaaaaaaa"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "User 1 gets folder activity",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"var rjson = JSON.parse(responseBody);",
+							"var children = rjson.children;",
+							"var keys = Object.keys(children);",
+							"",
+							"var count = 0;",
+							"",
+							"for (var i = 0; i < keys.length; i++) {",
+							"    var child = children[keys[i]];",
+							"    var change = \"event \" + i + \"change\";",
+							"    var read = \"event \" + i + \"read\";",
+							"    ",
+							"    var action = child.event_action;",
+							"    var author = child.event_author;",
+							"    var date = child.event_date;",
+							"    ",
+							"    console.log(\"Event author: \" + author);",
+							"    console.log(\"Event action: \" + action);",
+							"    console.log(\"Event date: \" + date);",
+							"    ",
+							"    if (author === \"lilli\") {",
+							"        count ++;",
+							"        var k = \"notification n° \" + (i+1) + \" is a \" + action + \" from user2\"",
+							"        tests[k] = true;",
+							"    }",
+							"}",
+							"",
+							"if (count === 0){",
+							"    tests[\"Found notification from lilli actions\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{user1}}",
+						"password": "{{password1}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": "{{url}}/api/pydio/feed/notif{{folder}}/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic d2F0c29uOnNlY3VyaXR5",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "repository_id",
+							"value": "{{ws}}",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "format",
+							"value": "json",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "offset",
+							"value": "0",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "limit",
+							"value": "10",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "User 1 generates share link on file",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"var rjson = JSON.parse(responseBody);",
+							"",
+							"var links = rjson.links;",
+							"tests[\"Got share link\"] = links;",
+							"",
+							"var keys = Object.keys(links);",
+							"for(var i = 0; i < keys.length; i++) {",
+							"    var k = keys[i];",
+							"    postman.setEnvironmentVariable(\"link\", k);",
+							"    var content = links[k];",
+							"    postman.getEnvironmentVariable(\"public_user\", content.internal_user_id);",
+							"    break;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{user1}}",
+						"password": "{{password1}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": "{{url}}/api/{{ws}}/share/file/{{folder}}/{{file}}",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic d2F0c29uOnNlY3VyaXR5",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "sub_action",
+							"value": "share_node",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "create_guest_user",
+							"value": "true",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "self_watch_folder",
+							"value": "true",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "simple_right_read",
+							"value": "on",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "simple_right_download",
+							"value": "on",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "share_type",
+							"value": "on",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "expiration",
+							"value": "0",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "download_limit",
+							"value": "0",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "return_json",
+							"value": "true",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "simple_right_write",
+							"value": "on",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"value": "{{folder}}/{{file}}",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "enable_public_link",
+							"value": "true",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Watch on shared file",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{user1}}",
+						"password": "{{password1}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": "{{url}}/api/{{ws}}/toggle_link_watch{{folder}}/{{file}}",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic d2F0c29uOnNlY3VyaXR5",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "element_type",
+							"value": "file",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "element_id",
+							"value": "{{link}}",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Check share file",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/public/{{link}}",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "User 1 gets shared file activity",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"var rjson = JSON.parse(responseBody);",
+							"var children = rjson.children;",
+							"var keys = Object.keys(children);",
+							"",
+							"var count = 0;",
+							"",
+							"for (var i = 0; i < keys.length; i++) {",
+							"    var child = children[keys[i]];",
+							"    var change = \"event \" + i + \"change\";",
+							"    var read = \"event \" + i + \"read\";",
+							"    ",
+							"    var action = child.event_action;",
+							"    var author = child.event_author;",
+							"    var date = child.event_date;",
+							"    ",
+							"    console.log(\"Event author: \" + author);",
+							"    console.log(\"Event action: \" + action);",
+							"    console.log(\"Event date: \" + date);",
+							"    ",
+							"    if (author === postman.getEnvironmentVariable(\"public_user\")) {",
+							"        count ++;",
+							"        var k = \"notification n° \" + (i+1) + \" is a \" + action + \" on shared files by public user\"",
+							"        tests[k] = true;",
+							"    }",
+							"}",
+							"",
+							"if (count === 0){",
+							"    tests[\"Found notification from public user actions\"] = false;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{user1}}",
+						"password": "{{password1}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": "{{url}}/api/pydio/feed/alert{{folder}}/{{file}}",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic d2F0c29uOnNlY3VyaXR5",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "repository_id",
+							"value": "{{ws}}",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "format",
+							"value": "json",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "offset",
+							"value": "0",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "limit",
+							"value": "50",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
