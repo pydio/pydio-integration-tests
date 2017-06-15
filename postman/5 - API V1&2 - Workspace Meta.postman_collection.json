@@ -1181,6 +1181,264 @@
 				"description": ""
 			},
 			"response": []
+		},
+		{
+			"name": "Delete role",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"if (responseBody.startsWith(\"{\")){",
+							"    var rjson = JSON.parse(responseBody);",
+							"    tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"    tests[\"User deteleted\"] = rjson.message.message.startsWith(\"Successfully deleted\");",
+							"    ",
+							"} else if (responseBody.startsWith(\"<?\")){",
+							"    var rjson = xml2Json(responseBody);",
+							"     ",
+							"    if(rjson.tree.message[\"_\"].startsWith(\"Cannot find role\")){",
+							"        tests[\"role does not exists\"] = true;",
+							"    } else {",
+							"        tests[\"Deletion failed\"] = false;",
+							"    }",
+							"    ",
+							"} else {",
+							"    tests[\"Deletion failed\"] = false;",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{admin}}",
+						"password": "{{admin_password}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v2/admin/roles/watcher?format=json",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"admin",
+						"roles",
+						"watcher"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46c2VjdXJpdHk=",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete created user1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var rjson = JSON.parse(responseBody);",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var alreadyDeleted = rjson.message.message.startsWith(\"Successfully deleted group (1)\");",
+							"var deleted = rjson.message.message.startsWith(\"User successfully erased (1)\");",
+							"",
+							"if(alreadyDeleted){",
+							"    tests[\"User already deleted\"] = true;",
+							"} else if (deleted){",
+							"    tests[\"User deleted\"] = true;",
+							"} else {",
+							"    tests[\"Failed to delete user\"] = true;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{admin}}",
+						"password": "{{admin_password}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v2/admin/people/{{user1}}?format=json",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"admin",
+						"people",
+						"{{user1}}"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46c2VjdXJpdHk=",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete created user2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var rjson = JSON.parse(responseBody);",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var alreadyDeleted = rjson.message.message.startsWith(\"Successfully deleted group (1)\");",
+							"var deleted = rjson.message.message.startsWith(\"User successfully erased (1)\");",
+							"",
+							"if(alreadyDeleted){",
+							"    tests[\"User already deleted\"] = true;",
+							"} else if (deleted){",
+							"    tests[\"User deleted\"] = true;",
+							"} else {",
+							"    tests[\"Failed to delete user\"] = true;",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{admin}}",
+						"password": "{{admin_password}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v2/admin/people/{{user2}}?format=json",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"admin",
+						"people",
+						"{{user2}}"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46c2VjdXJpdHk=",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete workspace",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "{{url}}/api/v2/admin/workspaces/{{ws}}?format=json",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"admin",
+						"workspaces",
+						"{{ws}}"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
 		}
 	]
 }
