@@ -19,7 +19,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
 									"if (responseBody.startsWith(\"{\")) {",
@@ -35,7 +34,11 @@
 									"        tests[\"creation failed\"] = false;",
 									"    }",
 									"}",
-									""
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						},
@@ -60,7 +63,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/people/{{user}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/people/{{user}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"people",
+								"{{user}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -96,7 +120,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
 									"if (responseBody.startsWith(\"{\")){",
@@ -106,8 +129,9 @@
 									"    tests[\"created\"] = false;",
 									"}",
 									"",
-									"",
-									""
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						},
@@ -131,7 +155,27 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/workspaces?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/workspaces?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"workspaces"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -162,7 +206,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
 									"if (responseBody.startsWith(\"{\")){",
@@ -172,6 +215,10 @@
 									"    tests[\"created\"] = false;",
 									"}",
 									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
 									"",
 									""
 								]
@@ -197,7 +244,27 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/workspaces?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/workspaces?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"workspaces"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -228,7 +295,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
 									"if (responseBody.startsWith(\"{\")){",
@@ -238,8 +304,9 @@
 									"    tests[\"created\"] = false;",
 									"}",
 									"",
-									"",
-									""
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						},
@@ -263,7 +330,27 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/workspaces?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/workspaces?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"workspaces"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -294,18 +381,18 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
 									"if (responseBody.startsWith(\"{\")){",
 									"    var rjson = JSON.parse(responseBody);",
 									"    tests[\"created\"] =  rjson.message.message.startsWith(\"Successfully created workspace! You can now add some 'Metadata Sources'\");",
+									"    ",
 									"} else {",
 									"    tests[\"created\"] = false;",
 									"}",
-									"",
-									"",
-									""
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						},
@@ -329,7 +416,27 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/workspaces?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/workspaces?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"workspaces"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -361,8 +468,6 @@
 								"type": "text/javascript",
 								"exec": [
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
-									"",
 									"var jsonData = JSON.parse(responseBody);",
 									"var keys = Object.keys(jsonData.data.children);",
 									"",
@@ -393,7 +498,12 @@
 									"        postman.setEnvironmentVariable(\"d_ws_id\", ws.repository_id)",
 									"        tests[\"found deny workspace\"] = true;",
 									"    }",
-									"}"
+									"}",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -408,7 +518,27 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/workspaces?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/workspaces?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"workspaces"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -430,7 +560,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
 									"if (responseBody.startsWith(\"{\")){",
@@ -449,7 +578,11 @@
 									"    ",
 									"} else {",
 									"    tests[\"created\"] = false",
-									"}"
+									"}",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						},
@@ -487,7 +620,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"roles",
+								"{{new_role_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -517,7 +671,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
 									"var jsonData = JSON.parse(responseBody);",
@@ -530,7 +683,12 @@
 									"    matches &= (role.ACL[k] === jsonData.ACL[k]);",
 									"}",
 									"",
-									"tests[\"received matches with sent\"] = matches;"
+									"tests[\"received matches with sent\"] = matches;",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -545,7 +703,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"roles",
+								"{{new_role_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "PATCH",
 						"header": [
 							{
@@ -598,7 +777,10 @@
 									"        tests[\"and acl matches\"] = matches;",
 									"    }",
 									"}",
-									""
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -613,7 +795,27 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/roles?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/roles?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"roles"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -640,7 +842,14 @@
 									"",
 									"var rjson = JSON.parse(responseBody);",
 									"",
-									"tests[\"Role assigned to user\"] = rjson.message.startsWith(\"Role added to user \" + postman.getEnvironmentVariable(\"user\"));"
+									"tests[\"Role assigned to user\"] = rjson.message.startsWith(\"Role added to user \" + postman.getEnvironmentVariable(\"user\"));",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -655,7 +864,29 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/people/AJXP_USR_/{{user}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/people/AJXP_USR_/{{user}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"people",
+								"AJXP_USR_",
+								"{{user}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "PATCH",
 						"header": [
 							{
@@ -706,7 +937,14 @@
 									"        rights[wsId] = repo[\"@acl\"];",
 									"    }",
 									"}",
-									"postman.setEnvironmentVariable(\"user_rights\", JSON.stringify(rights));"
+									"postman.setEnvironmentVariable(\"user_rights\", JSON.stringify(rights));",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -721,7 +959,26 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/user?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/user?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"user"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -771,7 +1028,12 @@
 									"    tests[\"Admin unexpectedly cannot create file on this ws\"] = true;",
 									"}",
 									"",
-									""
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -786,7 +1048,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{r_ws_id}}/a.txt?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{r_ws_id}}/a.txt?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{r_ws_id}}",
+								"a.txt"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -843,7 +1126,16 @@
 									"    } else {",
 									"        tests[\"user does not have write right on this workspace\"] = true;",
 									"    }",
-									"}"
+									"}",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -858,7 +1150,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{r_ws_id}}/u.txt?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{r_ws_id}}/u.txt?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{r_ws_id}}",
+								"u.txt"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -902,7 +1215,12 @@
 									"    tests[\"Admin unexpectedly cannot create file on this ws\"] = true;",
 									"}",
 									"",
-									""
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -917,7 +1235,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{rw_ws_id}}/a.txt?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{rw_ws_id}}/a.txt?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{rw_ws_id}}",
+								"a.txt"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -974,7 +1313,14 @@
 									"    } else {",
 									"        tests[\"user does not have write right on this workspace\"] = true;",
 									"    }",
-									"}"
+									"}",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -989,7 +1335,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{rw_ws_id}}/u.txt?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{rw_ws_id}}/u.txt?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{rw_ws_id}}",
+								"u.txt"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -1033,7 +1400,12 @@
 									"    tests[\"Admin unexpectedly cannot create file on this ws\"] = true;",
 									"}",
 									"",
-									""
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -1048,7 +1420,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{w_ws_id}}/a.txt?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{w_ws_id}}/a.txt?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{w_ws_id}}",
+								"a.txt"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -1108,7 +1501,12 @@
 									"    } else {",
 									"        tests[\"user does not have write right on this workspace\"] = true;",
 									"    }",
-									"}"
+									"}",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -1123,7 +1521,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{w_ws_id}}/u.txt?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{w_ws_id}}/u.txt?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{w_ws_id}}",
+								"u.txt"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -1166,8 +1585,11 @@
 									"} else if (responseCode.code == 401) {",
 									"    tests[\"Admin unexpectedly cannot create file on this ws\"] = true;",
 									"}",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
 									"",
-									""
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -1182,7 +1604,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{d_ws_id}}/a.txt?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{d_ws_id}}/a.txt?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{d_ws_id}}",
+								"a.txt"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -1247,7 +1690,13 @@
 									"            tests[\"user does not have write right on this workspace\"] = true;",
 									"        }",
 									"    }",
-									"}"
+									"}",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -1262,7 +1711,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{d_ws_id}}/u.txt?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{d_ws_id}}/u.txt?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{d_ws_id}}",
+								"u.txt"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -1310,8 +1780,13 @@
 									"} else if (responseCode.code == 401) {",
 									"    tests[\"Admin unexpectedly cannot read file on this ws\"] = true;",
 									"}",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
 									"",
-									""
+									"",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -1326,7 +1801,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{r_ws_id}}/a.txt?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{r_ws_id}}/a.txt?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{r_ws_id}}",
+								"a.txt"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -1376,7 +1872,12 @@
 									"} else {",
 									"    tests[\"Failed to read must be a server side problem\"] = false;",
 									"}",
-									""
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -1391,7 +1892,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{r_ws_id}}/a.txt?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{r_ws_id}}/a.txt?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{r_ws_id}}",
+								"a.txt"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -1433,8 +1955,13 @@
 									"} else if (responseCode.code == 401) {",
 									"    tests[\"Admin unexpectedly cannot read file on this ws\"] = true;",
 									"}",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
 									"",
-									""
+									"",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -1449,7 +1976,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{rw_ws_id}}/a.txt?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{rw_ws_id}}/a.txt?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{rw_ws_id}}",
+								"a.txt"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -1499,7 +2047,12 @@
 									"} else {",
 									"    tests[\"Failed to read must be a server side problem\"] = false;",
 									"}",
-									""
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -1514,7 +2067,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{rw_ws_id}}/u.txt?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{rw_ws_id}}/u.txt?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{rw_ws_id}}",
+								"u.txt"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -1557,7 +2131,12 @@
 									"    tests[\"Admin unexpectedly cannot read file on this ws\"] = true;",
 									"}",
 									"",
-									""
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -1572,7 +2151,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{w_ws_id}}/a.txt?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{w_ws_id}}/a.txt?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{w_ws_id}}",
+								"a.txt"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -1622,7 +2222,12 @@
 									"} else {",
 									"    tests[\"Failed to read must be a server side problem\"] = false;",
 									"}",
-									""
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -1637,7 +2242,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{w_ws_id}}/a.txt?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{w_ws_id}}/a.txt?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{w_ws_id}}",
+								"a.txt"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -1680,7 +2306,12 @@
 									"    tests[\"Admin unexpectedly cannot read file on this ws\"] = true;",
 									"}",
 									"",
-									""
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -1695,7 +2326,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{d_ws_id}}/a.txt?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{d_ws_id}}/a.txt?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{d_ws_id}}",
+								"a.txt"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -1749,7 +2401,12 @@
 									"} else {",
 									"    tests[\"Failed to read must be a server side problem\"] = false;",
 									"}",
-									""
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -1764,7 +2421,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{d_ws_id}}/a.txt?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{d_ws_id}}/a.txt?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{d_ws_id}}",
+								"a.txt"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -1809,7 +2487,12 @@
 									"} else {",
 									"    tests[\"Deletion failed\"] = false;",
 									"}",
-									""
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -1824,7 +2507,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"roles",
+								"{{new_role_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "DELETE",
 						"header": [
 							{
@@ -1858,7 +2562,12 @@
 									"    tests[\"User deleted\"] = true;",
 									"} else {",
 									"    tests[\"Failed to delete user\"] = true;",
-									"}"
+									"}",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -1873,7 +2582,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/people/{{user}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/people/{{user}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"people",
+								"{{user}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "DELETE",
 						"header": [
 							{
@@ -1904,7 +2634,12 @@
 									"    tests[\"workspace deleted\"] = rjson.message.message.startsWith(\"Successfully deleted workspace\");",
 									"} else {",
 									"    tests[\"The workspace does not exist\"] = false;",
-									"}"
+									"}",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -1919,7 +2654,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/workspaces/{{r_ws_id}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/workspaces/{{r_ws_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"workspaces",
+								"{{r_ws_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "DELETE",
 						"header": [
 							{
@@ -1950,7 +2706,12 @@
 									"    tests[\"workspace deleted\"] = rjson.message.message.startsWith(\"Successfully deleted workspace\");",
 									"} else {",
 									"    tests[\"The workspace does not exist\"] = false;",
-									"}"
+									"}",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -1965,7 +2726,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/workspaces/{{rw_ws_id}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/workspaces/{{rw_ws_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"workspaces",
+								"{{rw_ws_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "DELETE",
 						"header": [
 							{
@@ -1996,7 +2778,12 @@
 									"    tests[\"workspace deleted\"] = rjson.message.message.startsWith(\"Successfully deleted workspace\");",
 									"} else {",
 									"    tests[\"The workspace does not exist\"] = false;",
-									"}"
+									"}",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -2011,7 +2798,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/workspaces/{{w_ws_id}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/workspaces/{{w_ws_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"workspaces",
+								"{{w_ws_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "DELETE",
 						"header": [
 							{
@@ -2042,7 +2850,12 @@
 									"    tests[\"workspace deleted\"] = rjson.message.message.startsWith(\"Successfully deleted workspace\");",
 									"} else {",
 									"    tests[\"The workspace does not exist\"] = false;",
-									"}"
+									"}",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -2057,7 +2870,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/workspaces/{{d_ws_id}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/workspaces/{{d_ws_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"workspaces",
+								"{{d_ws_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "DELETE",
 						"header": [
 							{

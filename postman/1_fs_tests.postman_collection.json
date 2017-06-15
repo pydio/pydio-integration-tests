@@ -22,7 +22,11 @@
 									"var jsonData = JSON.parse(responseBody);",
 									"tests[\"created\"] = jsonData.reload.pendingSelection === postman.getEnvironmentVariable(\"cur_user\");",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						},
@@ -47,7 +51,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/people/{{cur_user}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/people/{{cur_user}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"people",
+								"{{cur_user}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -88,7 +113,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -103,7 +132,27 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/user/preferences?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/user/preferences?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"user",
+								"preferences"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -134,8 +183,9 @@
 									"    postman.clearEnvironmentVariable(\"new_password\");",
 									"}",
 									"",
-									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						},
@@ -159,7 +209,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/people/{{cur_user}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/people/{{cur_user}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"people",
+								"{{cur_user}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "PATCH",
 						"header": [
 							{
@@ -189,7 +260,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -204,7 +279,26 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/user?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/user?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"user"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -233,7 +327,11 @@
 								"type": "text/javascript",
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						},
@@ -258,7 +356,27 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/workspaces?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/workspaces?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"workspaces"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -290,11 +408,9 @@
 								"type": "text/javascript",
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
-									"",
 									"var keys = Object.keys(jsonData.data.children);",
 									"",
-									"for (var i = 0; i < keys.length; i++){",
-									"    ",
+									"for (var i = 0; i < keys.length; i++) {",
 									"    var key = keys[i];",
 									"    var ws = jsonData.data.children[key];",
 									"    console.log(ws.slug);",
@@ -304,10 +420,13 @@
 									"        tests[\"workspace\"] = true;",
 									"        return;",
 									"    }",
-									"    ",
 									"}",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -322,7 +441,27 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/workspaces?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/workspaces?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"workspaces"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -344,7 +483,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						},
@@ -369,7 +512,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"roles",
+								"{{new_role_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -394,7 +558,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -409,7 +577,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"roles",
+								"{{new_role_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "PATCH",
 						"header": [
 							{
@@ -439,7 +628,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -518,7 +711,12 @@
 									"}",
 									"",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -533,7 +731,26 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/user?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/user?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"user"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -569,7 +786,14 @@
 									"}",
 									"",
 									"tests[\"created\"] = created",
-									"postman.clearEnvironmentVariable(\"file\");"
+									"postman.clearEnvironmentVariable(\"file\");",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						},
@@ -597,7 +821,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{created_ws_id}}/{{file}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{created_ws_id}}/{{file}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{created_ws_id}}",
+								"{{file}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -624,7 +869,14 @@
 									"if(created){",
 									"    tests[\"created\"] = created.path.endsWith(postman.getEnvironmentVariable(\"folder\"));",
 									"}",
-									"tests[\"created\"] = created"
+									"tests[\"created\"] = created;",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						},
@@ -650,7 +902,29 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{created_ws_id}}/{{folder}}/?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{created_ws_id}}/{{folder}}/?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{created_ws_id}}",
+								"{{folder}}",
+								""
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -690,7 +964,14 @@
 									"            postman.setEnvironmentVariable(\"folder\", child.label);",
 									"        }",
 									"    } while(!postman.getEnvironmentVariable(\"folder\"))",
-									"}"
+									"}",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -705,7 +986,34 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{created_ws_id}}/?format=json&children=a",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{created_ws_id}}/?format=json&children=a",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{created_ws_id}}",
+								""
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "children",
+									"value": "a",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -731,10 +1039,13 @@
 									"",
 									"var added = resp.tree.nodes_diff.add;",
 									"var updated = resp.tree.nodes_diff.update;",
-									"",
 									"tests.uploaded = added || updated;",
 									"",
-									""
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						},
@@ -759,7 +1070,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/io/{{workspace}}/{{file}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/io/{{workspace}}/{{file}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"io",
+								"{{workspace}}",
+								"{{file}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "PUT",
 						"header": [
 							{
@@ -781,7 +1113,7 @@
 					},
 					"response": [
 						{
-							"id": "1c8edb9c-c684-460a-8e89-a00934a66945",
+							"id": "413a0fd1-ea50-412f-b793-5973b4f633f5",
 							"name": "uploaed_resp",
 							"originalRequest": {
 								"url": "{{url}}/v2/io/my-files/m.jpg",
@@ -885,7 +1217,14 @@
 									"            postman.setEnvironmentVariable(\"file\", child.label);",
 									"        }",
 									"    } while(!postman.getEnvironmentVariable(\"file\"))",
-									"}"
+									"}",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -900,7 +1239,35 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{created_ws_id}}/{{folder}}/?format=json&children=a",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{created_ws_id}}/{{folder}}/?format=json&children=a",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{created_ws_id}}",
+								"{{folder}}",
+								""
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "children",
+									"value": "a",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -922,8 +1289,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
-									""
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -954,6 +1324,21 @@
 				},
 				{
 					"name": "Copy file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -964,7 +1349,29 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{created_ws_id}}/{{folder}}/{{file}}copy?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{created_ws_id}}/{{folder}}/{{file}}copy?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{created_ws_id}}",
+								"{{folder}}",
+								"{{file}}copy"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -989,6 +1396,21 @@
 				},
 				{
 					"name": "Rename file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -999,7 +1421,35 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{created_ws_id}}/{{folder}}/{{file}}2?copy_source={{created_ws_id}}/{{folder}}/{{file}}copy&delete_source=true",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{created_ws_id}}/{{folder}}/{{file}}2?copy_source={{created_ws_id}}/{{folder}}/{{file}}copy&delete_source=true",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{created_ws_id}}",
+								"{{folder}}",
+								"{{file}}2"
+							],
+							"query": [
+								{
+									"key": "copy_source",
+									"value": "{{created_ws_id}}/{{folder}}/{{file}}copy",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "delete_source",
+									"value": "true",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -1015,6 +1465,21 @@
 				},
 				{
 					"name": "Delete file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -1025,7 +1490,29 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{created_ws_id}}/{{folder}}/{{file}}2?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{created_ws_id}}/{{folder}}/{{file}}2?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{created_ws_id}}",
+								"{{folder}}",
+								"{{file}}2"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "DELETE",
 						"header": [
 							{
@@ -1047,7 +1534,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Request successfully precessed\"] = responseCode.code === 200;"
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -1062,7 +1553,29 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/fs/{{created_ws_id}}/{{folder}}/?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{created_ws_id}}/{{folder}}/?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{created_ws_id}}",
+								"{{folder}}",
+								""
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "DELETE",
 						"header": [
 							{
@@ -1084,6 +1597,22 @@
 			"item": [
 				{
 					"name": "Remove User Role",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -1094,7 +1623,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/people/{{new_role_id}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/people/{{new_role_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"people",
+								"{{new_role_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "DELETE",
 						"header": [
 							{
@@ -1118,6 +1668,22 @@
 				},
 				{
 					"name": "Delete Created Role",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -1144,6 +1710,22 @@
 				},
 				{
 					"name": "Delete Created workspace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -1170,6 +1752,22 @@
 				},
 				{
 					"name": "Delete Created User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "basic",

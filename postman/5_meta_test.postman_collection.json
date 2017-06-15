@@ -15,9 +15,6 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"",
 							"if (responseBody.startsWith(\"{\")) {",
 							"    var rjson = JSON.parse(responseBody);",
 							"    tests[\"created\"] =  rjson.message.message.startsWith(\"Successfully created workspace! You can now add some 'Metadata Sources'\");",
@@ -28,7 +25,12 @@
 							"} else {",
 							"    tests[\"created\"] = false;",
 							"    ",
-							"}"
+							"}",
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
 						]
 					}
 				}
@@ -95,9 +97,6 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"",
 							"if (responseBody.startsWith(\"{\")){",
 							"    console.log(\"might be json\");",
 							"    var rjson = JSON.parse(responseBody);",
@@ -114,7 +113,13 @@
 							"    ",
 							"} else {",
 							"    tests[\"created\"] = false",
-							"}"
+							"}",
+							"",
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
 						]
 					}
 				}
@@ -180,9 +185,14 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
 							"var jsonData = JSON.parse(responseBody);",
-							"tests[\"received matches with sent\"] = jsonData.ACL[postman.getEnvironmentVariable(\"ws\")] == \"rw\";"
+							"tests[\"received matches with sent\"] = jsonData.ACL[postman.getEnvironmentVariable(\"ws\")] == \"rw\";",
+							"",
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
 						]
 					}
 				}
@@ -248,13 +258,9 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"",
 							"if (responseBody.startsWith(\"{\")) {",
 							"    var data = JSON.parse(responseBody);",
-							"    tests[\"user created\"] = ",
-							"    (data.message.level === \"Info\" && data.reload.pendingSelection === postman.getEnvironmentVariable(\"user\"));",
+							"    tests[\"user created\"] = data.reload.pendingSelection === postman.getEnvironmentVariable(\"user1\");",
 							"} else {",
 							"    var data = xml2Json(responseBody);",
 							"    ",
@@ -264,7 +270,12 @@
 							"        tests[\"creation failed\"] = false;",
 							"    }",
 							"}",
-							""
+							"",
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
 						]
 					}
 				},
@@ -346,12 +357,14 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
-							"",
 							"var rjson = JSON.parse(responseBody);",
 							"",
-							"tests[\"Role assigned to user\"] = rjson.message.startsWith(\"Role added to user \" + postman.getEnvironmentVariable(\"user\"));"
+							"tests[\"Role assigned to user\"] = rjson.message.startsWith(\"Role added to user \" + postman.getEnvironmentVariable(\"user1\"));",
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
 						]
 					}
 				}
@@ -417,8 +430,6 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"",
 							"if (responseBody.startsWith(\"{\")) {",
 							"    var rjson = JSON.parse(responseBody);",
 							"    var add = rjson.nodesDiff.add",
@@ -428,7 +439,12 @@
 							"    var rjson = xml2Json(responseBody);",
 							"    tests[\"Folder not created\"] = false;",
 							"}",
-							""
+							"",
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
 						]
 					}
 				}
@@ -487,9 +503,6 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"",
 							"if (responseBody.startsWith(\"{\")) {",
 							"    var data = JSON.parse(responseBody);",
 							"    tests[\"user created\"] = ",
@@ -503,7 +516,12 @@
 							"        tests[\"creation failed\"] = false;",
 							"    }",
 							"}",
-							""
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);",
+							"",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
 						]
 					}
 				},
@@ -585,12 +603,14 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
-							"",
 							"var rjson = JSON.parse(responseBody);",
+							"tests[\"Role assigned to user\"] = rjson.message.startsWith(\"Role added to user \" + postman.getEnvironmentVariable(\"user2\"));",
 							"",
-							"tests[\"Role assigned to user\"] = rjson.message.startsWith(\"Role added to user \" + postman.getEnvironmentVariable(\"user\"));"
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
 						]
 					}
 				}
@@ -657,9 +677,13 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
 							"var rjson = JSON.parse(responseBody);",
-							"tests[\"folder watched\"] = rjson.update[0].meta_watched == \"META_WATCH_BOTH\";"
+							"tests[\"folder watched\"] = rjson.update[0].meta_watched == \"META_WATCH_BOTH\";",
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
 						]
 					}
 				}
@@ -736,6 +760,10 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);",
+							"",
 							"tests[\"Status code is 200\"] = responseCode.code === 200;"
 						]
 					}
@@ -812,7 +840,6 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
 							"var rjson = JSON.parse(responseBody);",
 							"var children = rjson.children;",
 							"var keys = Object.keys(children);",
@@ -841,7 +868,12 @@
 							"",
 							"if (count === 0){",
 							"    tests[\"Found notification from lilli actions\"] = false;",
-							"}"
+							"}",
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
 						]
 					}
 				}
@@ -906,7 +938,6 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
 							"var rjson = JSON.parse(responseBody);",
 							"",
 							"var links = rjson.links;",
@@ -919,7 +950,12 @@
 							"    var content = links[k];",
 							"    postman.getEnvironmentVariable(\"public_user\", content.internal_user_id);",
 							"    break;",
-							"}"
+							"}",
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
 						]
 					}
 				}
@@ -1026,6 +1062,22 @@
 		},
 		{
 			"name": "Watch on shared file",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"",
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "basic",
@@ -1074,7 +1126,10 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);"
 						]
 					}
 				}
@@ -1096,7 +1151,6 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
 							"var rjson = JSON.parse(responseBody);",
 							"var children = rjson.children;",
 							"var keys = Object.keys(children);",
@@ -1123,9 +1177,12 @@
 							"    }",
 							"}",
 							"",
-							"if (count === 0){",
-							"    tests[\"Found notification from public user actions\"] = false;",
-							"}"
+							"",
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
 						]
 					}
 				}
@@ -1207,7 +1264,12 @@
 							"} else {",
 							"    tests[\"Deletion failed\"] = false;",
 							"}",
-							""
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);",
+							"",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
 						]
 					}
 				}
@@ -1266,7 +1328,6 @@
 						"type": "text/javascript",
 						"exec": [
 							"var rjson = JSON.parse(responseBody);",
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
 							"",
 							"var alreadyDeleted = rjson.message.message.startsWith(\"Successfully deleted group (1)\");",
 							"var deleted = rjson.message.message.startsWith(\"User successfully erased (1)\");",
@@ -1277,7 +1338,13 @@
 							"    tests[\"User deleted\"] = true;",
 							"} else {",
 							"    tests[\"Failed to delete user\"] = true;",
-							"}"
+							"}",
+							"",
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
 						]
 					}
 				}
@@ -1336,7 +1403,6 @@
 						"type": "text/javascript",
 						"exec": [
 							"var rjson = JSON.parse(responseBody);",
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
 							"",
 							"var alreadyDeleted = rjson.message.message.startsWith(\"Successfully deleted group (1)\");",
 							"var deleted = rjson.message.message.startsWith(\"User successfully erased (1)\");",
@@ -1347,7 +1413,12 @@
 							"    tests[\"User deleted\"] = true;",
 							"} else {",
 							"    tests[\"Failed to delete user\"] = true;",
-							"}"
+							"}",
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
 						]
 					}
 				}
@@ -1405,12 +1476,24 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);"
 						]
 					}
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{admin}}",
+						"password": "{{admin_password}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
 				"url": {
 					"raw": "{{url}}/api/v2/admin/workspaces/{{ws}}?format=json",
 					"host": [
@@ -1434,7 +1517,13 @@
 					"variable": []
 				},
 				"method": "DELETE",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46c2VjdXJpdHk=",
+						"description": ""
+					}
+				],
 				"body": {},
 				"description": ""
 			},

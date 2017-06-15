@@ -33,7 +33,11 @@
 									"    } else {",
 									"        tests[\"creation failed\"] = false;",
 									"    }",
-									"}"
+									"}",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						},
@@ -123,7 +127,12 @@
 									"var userDetails = rjson.children[userPath];",
 									"if (userDetails) {",
 									"    tests[\"found created user\"] = true;",
-									"}"
+									"}",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -138,7 +147,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/people/?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/people/?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"people",
+								""
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -180,7 +210,14 @@
 									"",
 									"tests[\"My files\"] = repos.indexOf(\"1\") > -1;",
 									"tests[\"Common files\"] = repos.indexOf(\"0\") > -1;",
-									"tests[\"Shared files\"] = repos.indexOf(\"inbox\") > -1;"
+									"tests[\"Shared files\"] = repos.indexOf(\"inbox\") > -1;",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -220,7 +257,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Basic YWRtaW46UGFzMWRpb3Qh",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
 								"description": ""
 							}
 						],
@@ -254,7 +291,12 @@
 									"            tests[\"creation failed\"] = false;",
 									"        }",
 									"    }",
-									"}"
+									"}",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						},
@@ -279,7 +321,29 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/people//{{group_id}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/people//{{group_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"people",
+								"",
+								"{{group_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -323,7 +387,10 @@
 									"    postman.setEnvironmentVariable(\"group_path\", groupDetails.path);",
 									"}",
 									"",
-									""
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -338,7 +405,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/people/?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/people/?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"people",
+								""
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -371,7 +459,14 @@
 									"    matches &= (role.ACL[k] === jsonData.ACL[k]);",
 									"}",
 									"",
-									"tests[\"received matches with sent\"] = matches;"
+									"tests[\"received matches with sent\"] = matches;",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						},
@@ -479,7 +574,14 @@
 									"    var k = lkeys[i];",
 									"    matches &= (role.ACL[k] === jsonData.ACL[k]);",
 									"}",
-									"tests[\"received matches with sent\"] = matches;"
+									"tests[\"received matches with sent\"] = matches;",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -494,7 +596,27 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/roles{{group_role_id}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/roles{{group_role_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"roles{{group_role_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -543,7 +665,12 @@
 									"} else {",
 									"    console.log(\"shit! it's fucked up\");",
 									"    tests[\"created\"] = false",
-									"}"
+									"}",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						},
@@ -567,7 +694,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"roles",
+								"{{new_role_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -599,7 +747,13 @@
 									"    matches &= (role.ACL[k] === jsonData.ACL[k]);",
 									"}",
 									"",
-									"tests[\"received matches with sent\"] = matches;"
+									"tests[\"received matches with sent\"] = matches;",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						},
@@ -649,7 +803,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"roles",
+								"{{new_role_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "PATCH",
 						"header": [
 							{
@@ -702,7 +877,11 @@
 									"        tests[\"and acl matches\"] = matches;",
 									"    }",
 									"}",
-									""
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -717,7 +896,27 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/roles?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/roles?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"roles"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -746,11 +945,33 @@
 								"type": "text/javascript",
 								"exec": [
 									"var rjson = JSON.parse(responseBody);",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
-									"if (responseCode.code === 200) {",
-									"    tests[\"user added to group\"] = rjson.message.message.startsWith(\"1 users were moved to group \" + postman.getEnvironmentVariable(\"group_role_id\"));",
-									"}"
+									"var codeIs200 = responseCode.code === 200",
+									"tests[\"Status code is 200\"] = codeIs200;",
+									"",
+									"if (codeIs200) {",
+									"    var roleId = postman.getEnvironmentVariable(\"new_role_id\");",
+									"    tests[\"Found created role\"] = rjson.children[roleId];",
+									"    ",
+									"    if (rjson.children[roleId]){",
+									"        var setAcl = JSON.parse(postman.getEnvironmentVariable(\"role_acl_value\")).ACL;",
+									"        var receivedAcl = rjson.children[roleId].role.ACL;",
+									"        ",
+									"        var keys = Object.keys(receivedAcl);",
+									"        var matches = true;",
+									"        ",
+									"        for (var i = 0; i < keys.length; i++){",
+									"            var k = keys[i];",
+									"            matches &= (setAcl[k] === receivedAcl[k]);",
+									"        }",
+									"        tests[\"and acl matches\"] = matches;",
+									"    }",
+									"}",
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -765,7 +986,27 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/ajxp_conf/user_update_group/{{user}}{{group_role_id}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/ajxp_conf/user_update_group/{{user}}{{group_role_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"ajxp_conf",
+								"user_update_group",
+								"{{user}}{{group_role_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -796,7 +1037,11 @@
 									"if (userDetails){",
 									"    var merged = JSON.stringify(userDetails.json_merged_role.ACL);",
 									"    postman.setEnvironmentVariable(\"user_merged_acl\", merged);",
-									"}"
+									"}",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -811,7 +1056,29 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/people/AJXP_GRP_{{group_path}}/?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/people/AJXP_GRP_{{group_path}}/?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"people",
+								"AJXP_GRP_{{group_path}}",
+								""
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -833,6 +1100,21 @@
 			"item": [
 				{
 					"name": "Assign role to user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -843,7 +1125,29 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/people/AJXP_USR_/{{user}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/people/AJXP_USR_/{{user}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"people",
+								"AJXP_USR_",
+								"{{user}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "PATCH",
 						"header": [
 							{
@@ -892,7 +1196,10 @@
 									"}",
 									"",
 									"tests[\"Received merged role matches with calculated merged role\"] = matches;",
-									""
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -907,7 +1214,29 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/people/AJXP_GRP_{{group_path}}/{{user}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/people/AJXP_GRP_{{group_path}}/{{user}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"people",
+								"AJXP_GRP_{{group_path}}",
+								"{{user}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -947,7 +1276,11 @@
 									"    tests[\"User deleted\"] = true;",
 									"} else {",
 									"    tests[\"Failed to delete user\"] = true;",
-									"}"
+									"}",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -1005,9 +1338,9 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"if (responseBody.startsWith(\"{\")){",
 									"    var rjson = JSON.parse(responseBody);",
-									"    tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"    tests[\"User deteleted\"] = rjson.message.message.startsWith(\"Successfully deleted\");",
 									"    ",
 									"} else if (responseBody.startsWith(\"<?\")){",
@@ -1022,7 +1355,11 @@
 									"} else {",
 									"    tests[\"Deletion failed\"] = false;",
 									"}",
-									""
+									"",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -1037,7 +1374,28 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/roles/{{new_role_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"roles",
+								"{{new_role_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "DELETE",
 						"header": [
 							{
@@ -1066,7 +1424,11 @@
 									"        var data = JSON.parse(responseBody);",
 									"        tests[\"group deleted\"] = data.message.message.startsWith(\"Successfully deleted group (1)\");",
 									"    }",
-									"}"
+									"}",
+									"",
+									"var rt = postman.getEnvironmentVariable(\"request_time\");",
+									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -1081,7 +1443,29 @@
 								"showPassword": false
 							}
 						},
-						"url": "{{url}}/api/v2/admin/people//{{group_id}}?format=json",
+						"url": {
+							"raw": "{{url}}/api/v2/admin/people//{{group_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"admin",
+								"people",
+								"",
+								"{{group_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "DELETE",
 						"header": [
 							{
