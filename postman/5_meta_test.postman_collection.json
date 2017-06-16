@@ -1466,6 +1466,66 @@
 			"response": []
 		},
 		{
+			"name": "Delete workspace folder",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"var rt = postman.getEnvironmentVariable(\"request_time\");",
+							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
+							"tests[rtKey] = responseTime < parseInt(rt);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "{{admin}}",
+						"password": "{{admin_password}}",
+						"saveHelperData": true,
+						"showPassword": false
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/v2/fs/{{ws}}?format=json",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"fs",
+						"{{ws}}"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46c2VjdXJpdHk=",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
 			"name": "Delete workspace",
 			"event": [
 				{

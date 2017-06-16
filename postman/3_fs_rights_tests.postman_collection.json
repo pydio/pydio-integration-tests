@@ -2592,6 +2592,46 @@
 					"response": []
 				},
 				{
+					"name": "Delete read-only workspace folder",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{r_ws_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{r_ws_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "Delete read-only workspace",
 					"event": [
 						{
@@ -2655,6 +2695,46 @@
 								"description": ""
 							}
 						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete read-write workspace folder",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{rw_ws_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{rw_ws_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "DELETE",
+						"header": [],
 						"body": {},
 						"description": ""
 					},
@@ -2730,6 +2810,46 @@
 					"response": []
 				},
 				{
+					"name": "Delete write-only workspace folder",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{w_ws_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{w_ws_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "Delete write-only workspace",
 					"event": [
 						{
@@ -2793,6 +2913,46 @@
 								"description": ""
 							}
 						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete denied workspace folder",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "{{admin}}",
+								"password": "{{admin_password}}",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v2/fs/{{d_ws_id}}?format=json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"fs",
+								"{{d_ws_id}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "DELETE",
+						"header": [],
 						"body": {},
 						"description": ""
 					},
