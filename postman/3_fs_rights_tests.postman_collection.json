@@ -1478,7 +1478,7 @@
 									"            }",
 									"            ",
 									"        } else if(msg.startsWith(\"You have no read permission on this folder\")){",
-									"            tests[\"wtf? read required for write\"] = false;",
+									"            tests[\"wtf? read required for write\"] = true;",
 									"        }",
 									"        ",
 									"    } else {",
@@ -2604,7 +2604,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/api/v2/fs/{{r_ws_id}}?format=json",
+							"raw": "{{url}}/api/v2/fs/{{r_ws_id}}/?format=json",
 							"host": [
 								"{{url}}"
 							],
@@ -2612,7 +2612,8 @@
 								"api",
 								"v2",
 								"fs",
-								"{{r_ws_id}}"
+								"{{r_ws_id}}",
+								""
 							],
 							"query": [
 								{
@@ -2713,7 +2714,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/api/v2/fs/{{rw_ws_id}}?format=json",
+							"raw": "{{url}}/api/v2/fs/{{rw_ws_id}}/?format=json",
 							"host": [
 								"{{url}}"
 							],
@@ -2721,7 +2722,8 @@
 								"api",
 								"v2",
 								"fs",
-								"{{rw_ws_id}}"
+								"{{rw_ws_id}}",
+								""
 							],
 							"query": [
 								{
@@ -2822,7 +2824,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/api/v2/fs/{{w_ws_id}}?format=json",
+							"raw": "{{url}}/api/v2/fs/{{w_ws_id}}/?format=json",
 							"host": [
 								"{{url}}"
 							],
@@ -2830,7 +2832,8 @@
 								"api",
 								"v2",
 								"fs",
-								"{{w_ws_id}}"
+								"{{w_ws_id}}",
+								""
 							],
 							"query": [
 								{
@@ -2931,7 +2934,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/api/v2/fs/{{d_ws_id}}?format=json",
+							"raw": "{{url}}/api/v2/fs/{{d_ws_id}}/?format=json",
 							"host": [
 								"{{url}}"
 							],
@@ -2939,7 +2942,8 @@
 								"api",
 								"v2",
 								"fs",
-								"{{d_ws_id}}"
+								"{{d_ws_id}}",
+								""
 							],
 							"query": [
 								{
