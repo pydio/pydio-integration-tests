@@ -1266,10 +1266,7 @@
 							"}",
 							"var rt = postman.getEnvironmentVariable(\"request_time\");",
 							"var rtKey = \"Response time is less than \" + rt + \"ms\";",
-							"tests[rtKey] = responseTime < parseInt(rt);",
-							"",
-							"",
-							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+							"tests[rtKey] = responseTime < parseInt(rt);"
 						]
 					}
 				}

@@ -838,7 +838,6 @@
 								"type": "text/javascript",
 								"exec": [
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
 									"",
 									"var rjson = JSON.parse(responseBody);",
 									"",
@@ -847,9 +846,7 @@
 									"",
 									"var rt = postman.getEnvironmentVariable(\"request_time\");",
 									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
-									"tests[rtKey] = responseTime < parseInt(rt);",
-									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[rtKey] = responseTime < parseInt(rt);"
 								]
 							}
 						}
@@ -943,8 +940,7 @@
 									"var rt = postman.getEnvironmentVariable(\"request_time\");",
 									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
 									"tests[rtKey] = responseTime < parseInt(rt);",
-									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									""
 								]
 							}
 						}
@@ -1006,7 +1002,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
 									"var codeIs200 = responseCode.code === 200;",
 									"",
 									"",
@@ -1033,7 +1028,7 @@
 									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
 									"tests[rtKey] = responseTime < parseInt(rt);",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = codeIs200;"
 								]
 							}
 						}
@@ -1091,7 +1086,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
 									"var codeIs200 = responseCode.code === 200;",
 									"",
 									"if (responseCode.code == 200) {",
@@ -1193,7 +1187,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
 									"var codeIs200 = responseCode.code === 200;",
 									"",
 									"",
@@ -1220,7 +1213,7 @@
 									"tests[rtKey] = responseTime < parseInt(rt);",
 									"",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = codeIs200;"
 								]
 							}
 						}
@@ -1278,7 +1271,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
 									"var codeIs200 = responseCode.code === 200;",
 									"",
 									"if (responseCode.code == 200) {",
@@ -1320,7 +1312,7 @@
 									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
 									"tests[rtKey] = responseTime < parseInt(rt);",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = codeIs200;"
 								]
 							}
 						}
@@ -1378,7 +1370,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
 									"var codeIs200 = responseCode.code === 200;",
 									"",
 									"",
@@ -1405,7 +1396,7 @@
 									"tests[rtKey] = responseTime < parseInt(rt);",
 									"",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = codeIs200;"
 								]
 							}
 						}
@@ -1506,7 +1497,7 @@
 									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
 									"tests[rtKey] = responseTime < parseInt(rt);",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = codeIs200;"
 								]
 							}
 						}
@@ -1564,7 +1555,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
 									"var codeIs200 = responseCode.code === 200;",
 									"",
 									"",
@@ -1589,7 +1579,7 @@
 									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
 									"tests[rtKey] = responseTime < parseInt(rt);",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = codeIs200;"
 								]
 							}
 						}
@@ -1647,8 +1637,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
-									"var codeIs200 = responseCode.code === 200;",
+									"var codeIs200 = responseCode.code === 401;",
 									"",
 									"if (responseCode.code == 200) {",
 									"    if (responseBody.startsWith(\"{\")) {",
@@ -1696,7 +1685,7 @@
 									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
 									"tests[rtKey] = responseTime < parseInt(rt);",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = codeIs200;"
 								]
 							}
 						}
@@ -1760,7 +1749,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
 									"var codeIs200 = responseCode.code === 200;",
 									"",
 									"",
@@ -1786,7 +1774,7 @@
 									"",
 									"",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = codeIs200;"
 								]
 							}
 						}
@@ -1844,8 +1832,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
-									"",
 									"if (responseCode.code == 200) {",
 									"    ",
 									"    if (responseBody.startsWith(\"{\")) {",
@@ -1935,7 +1921,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"",
 									"var codeIs200 = responseCode.code === 200;",
 									"",
 									"",
@@ -2019,8 +2005,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
-									"",
 									"if (responseCode.code == 200) {",
 									"    ",
 									"    if (responseBody.startsWith(\"{\")) {",
@@ -2110,7 +2094,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
 									"var codeIs200 = responseCode.code === 200;",
 									"",
 									"",
@@ -2194,8 +2177,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
-									"",
 									"if (responseCode.code == 200) {",
 									"    ",
 									"    if (responseBody.startsWith(\"{\")) {",
@@ -2285,10 +2266,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
-									"var codeIs200 = responseCode.code === 200;",
-									"",
-									"",
 									"if (responseCode.code == 200){",
 									"    if (responseBody.startsWith(\"{\")){",
 									"        var rjson = JSON.parse(responseBody);",
@@ -2369,8 +2346,6 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
-									"",
 									"if (responseCode.code == 200) {",
 									"    ",
 									"    if (responseBody.startsWith(\"{\")) {",
@@ -2406,7 +2381,7 @@
 									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
 									"tests[rtKey] = responseTime < parseInt(rt);",
 									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 401\"] = responseCode.code === 401;"
 								]
 							}
 						}
@@ -2566,8 +2541,7 @@
 									"var rt = postman.getEnvironmentVariable(\"request_time\");",
 									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
 									"tests[rtKey] = responseTime < parseInt(rt);",
-									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									""
 								]
 							}
 						}
@@ -2627,8 +2601,6 @@
 								"exec": [
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
-									"",
 									"if (responseBody.startsWith(\"{\")) {",
 									"    var rjson = JSON.parse(responseBody)",
 									"    tests[\"workspace deleted\"] = rjson.message.message.startsWith(\"Successfully deleted workspace\");",
@@ -2638,8 +2610,7 @@
 									"var rt = postman.getEnvironmentVariable(\"request_time\");",
 									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
 									"tests[rtKey] = responseTime < parseInt(rt);",
-									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									""
 								]
 							}
 						}
@@ -2699,8 +2670,6 @@
 								"exec": [
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
-									"",
 									"if (responseBody.startsWith(\"{\")) {",
 									"    var rjson = JSON.parse(responseBody)",
 									"    tests[\"workspace deleted\"] = rjson.message.message.startsWith(\"Successfully deleted workspace\");",
@@ -2710,8 +2679,7 @@
 									"var rt = postman.getEnvironmentVariable(\"request_time\");",
 									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
 									"tests[rtKey] = responseTime < parseInt(rt);",
-									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									""
 								]
 							}
 						}
@@ -2771,8 +2739,6 @@
 								"exec": [
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
-									"",
 									"if (responseBody.startsWith(\"{\")) {",
 									"    var rjson = JSON.parse(responseBody)",
 									"    tests[\"workspace deleted\"] = rjson.message.message.startsWith(\"Successfully deleted workspace\");",
@@ -2782,8 +2748,7 @@
 									"var rt = postman.getEnvironmentVariable(\"request_time\");",
 									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
 									"tests[rtKey] = responseTime < parseInt(rt);",
-									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									""
 								]
 							}
 						}
@@ -2843,8 +2808,6 @@
 								"exec": [
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
-									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
-									"",
 									"if (responseBody.startsWith(\"{\")) {",
 									"    var rjson = JSON.parse(responseBody)",
 									"    tests[\"workspace deleted\"] = rjson.message.message.startsWith(\"Successfully deleted workspace\");",
@@ -2854,8 +2817,7 @@
 									"var rt = postman.getEnvironmentVariable(\"request_time\");",
 									"var rtKey = \"Response time is less than \" + rt + \"ms\";",
 									"tests[rtKey] = responseTime < parseInt(rt);",
-									"",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									""
 								]
 							}
 						}

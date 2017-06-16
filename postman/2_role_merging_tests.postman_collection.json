@@ -88,7 +88,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Basic YWRtaW46UGFzMWRpb3Qh",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
 								"description": ""
 							}
 						],
@@ -173,7 +173,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Basic YWRtaW46UGFzMWRpb3Qh",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
 								"description": ""
 							}
 						],
@@ -950,22 +950,7 @@
 									"tests[\"Status code is 200\"] = codeIs200;",
 									"",
 									"if (codeIs200) {",
-									"    var roleId = postman.getEnvironmentVariable(\"new_role_id\");",
-									"    tests[\"Found created role\"] = rjson.children[roleId];",
-									"    ",
-									"    if (rjson.children[roleId]){",
-									"        var setAcl = JSON.parse(postman.getEnvironmentVariable(\"role_acl_value\")).ACL;",
-									"        var receivedAcl = rjson.children[roleId].role.ACL;",
-									"        ",
-									"        var keys = Object.keys(receivedAcl);",
-									"        var matches = true;",
-									"        ",
-									"        for (var i = 0; i < keys.length; i++){",
-									"            var k = keys[i];",
-									"            matches &= (setAcl[k] === receivedAcl[k]);",
-									"        }",
-									"        tests[\"and acl matches\"] = matches;",
-									"    }",
+									"    tests[\"user added to group\"] = rjson.message.message.indexOf(\"were moved to group \" + postman.getEnvironmentVariable(\"group_role_id\"));",
 									"}",
 									"",
 									"",
@@ -1321,7 +1306,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Basic YWRtaW46UGFzMWRpb3Qh",
+								"value": "Basic YWRtaW46c2VjdXJpdHk=",
 								"description": ""
 							}
 						],
